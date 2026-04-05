@@ -10,12 +10,19 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 WHITELIST_URL = "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt"
 
 
+# ================= LOAD WHITELIST =================
+
 def load_whitelist():
     try:
         r = requests.get(WHITELIST_URL, timeout=10)
         domains = [d.strip() for d in r.text.splitlines() if d.strip()]
+
+        if not domains:
+            raise Exception("Whitelist пуст")
+
         print(f"[+] Whitelist: {len(domains)} доменов")
         return domains
+
     except Exception as e:
         print(f"[!] Ошибка загрузки whitelist: {e}")
         return []
@@ -23,6 +30,8 @@ def load_whitelist():
 
 WHITELIST = load_whitelist()
 
+
+# ================= UTILS =================
 
 def wait_socks(port=10808, timeout=5):
     for _ in range(timeout * 10):
@@ -33,6 +42,8 @@ def wait_socks(port=10808, timeout=5):
             time.sleep(0.1)
     return False
 
+
+# ================= CORE =================
 
 def run_test_connection(config_path):
     print("[*] Запуск Xray...")
@@ -48,6 +59,10 @@ def run_test_connection(config_path):
             print("[-] Xray не поднялся")
             return False
 
+        if not WHITELIST:
+            print("[-] Whitelist пуст — пропуск проверки")
+            return False
+
         print("[*] Проверка через whitelist...")
 
         proxies = {
@@ -55,8 +70,10 @@ def run_test_connection(config_path):
             "https": "socks5h://127.0.0.1:10808"
         }
 
-        # берём случайные домены
+        # берём случайные домены (важно!)
         test_domains = random.sample(WHITELIST, min(5, len(WHITELIST)))
+
+        success = 0
 
         for domain in test_domains:
             url = f"https://{domain}"
@@ -66,17 +83,26 @@ def run_test_connection(config_path):
                     url,
                     proxies=proxies,
                     timeout=10,
-                    verify=False
+                    verify=False,
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (Android 14; Mobile)",
+                        "Accept-Language": "ru,en;q=0.9"
+                    }
                 )
 
                 if r.status_code < 500:
                     print(f"[+] OK через {domain}")
-                    return True
+                    success += 1
+
+                    # 💡 ключевая логика: не один домен, а минимум 2
+                    if success >= 2:
+                        print("[+] ПРОКСИ РАБОТАЕТ (multi-check)")
+                        return True
 
             except:
                 continue
 
-        print("[-] Ни один whitelist-домен не открылся")
+        print("[-] Недостаточно успешных запросов")
         return False
 
     finally:
