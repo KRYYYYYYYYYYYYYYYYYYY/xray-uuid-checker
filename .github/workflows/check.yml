@@ -8,6 +8,8 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Даем боту право пушить изменения в файлы
     steps:
       - uses: actions/checkout@v4
       
