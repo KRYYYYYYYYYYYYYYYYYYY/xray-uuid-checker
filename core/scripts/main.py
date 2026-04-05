@@ -21,8 +21,7 @@ MAX_WORKERS = 10
 WHITELIST_URL = "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt"
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36",
-    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8"
+    "User-Agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36"
 }
 
 # ================= GLOBAL =================
@@ -34,30 +33,21 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # ================= WHITELIST =================
 
-def load_whitelist_or_exit():
-    try:
-        r = session.get(WHITELIST_URL, timeout=10)
-        domains = [
-            f"https://{d.strip()}"
-            for d in r.text.splitlines()
-            if d.strip()
-        ]
+def load_whitelist():
+    r = session.get(WHITELIST_URL, timeout=10)
+    domains = [f"https://{d.strip()}" for d in r.text.splitlines() if d.strip()]
 
-        if not domains:
-            raise Exception("Whitelist пуст")
+    if not domains:
+        raise Exception("Whitelist пуст")
 
-        print(f"[+] Whitelist загружен: {len(domains)} доменов")
-        return domains
+    print(f"[+] Whitelist загружен: {len(domains)} доменов")
+    return domains
 
-    except Exception as e:
-        print(f"[FATAL] Не удалось загрузить whitelist: {e}")
-        exit(1)
-
-WHITELIST = load_whitelist_or_exit()
+WHITELIST = load_whitelist()
 
 # ================= UTILS =================
 
-def wait_socks(port=10808, timeout=5):
+def wait_socks(port, timeout=5):
     for _ in range(timeout * 10):
         try:
             with socket.create_connection(("127.0.0.1", port), timeout=1):
@@ -66,30 +56,30 @@ def wait_socks(port=10808, timeout=5):
             time.sleep(0.1)
     return False
 
-def test_urls(proxies, urls):
-    for url in urls:
-        try:
-            r = session.get(
-                url,
-                proxies=proxies,
-                timeout=10,
-                headers=HEADERS
-            )
+def test_proxy(proxies):
+    success = 0
+    attempts = 5
 
-            if r.status_code in [200, 204, 301, 302]:
-                return True
+    test_domains = WHITELIST[:20]
+
+    for url in test_domains:
+        try:
+            r = session.get(url, proxies=proxies, timeout=10, headers=HEADERS)
+
+            if r.status_code == 200:
+                success += 1
 
         except:
             continue
 
-    return False
+        if success >= 3:
+            return True
 
-def test_proxy(proxies):
-    return test_urls(proxies, WHITELIST[:10])
+    return False
 
 # ================= XRAY =================
 
-def generate_config(uuid, host, port, params):
+def generate_config(uuid, host, port, params, local_port):
     security = params.get('security', ['none'])[0]
     sni = params.get('sni', [''])[0]
     pbk = params.get('pbk', [''])[0]
@@ -113,14 +103,22 @@ def generate_config(uuid, host, port, params):
 
     return {
         "log": {"loglevel": "none"},
-        "inbounds": [{"port": 10808, "listen": "127.0.0.1", "protocol": "socks"}],
+        "inbounds": [{
+            "port": local_port,
+            "listen": "127.0.0.1",
+            "protocol": "socks"
+        }],
         "outbounds": [{
             "protocol": "vless",
             "settings": {
                 "vnext": [{
                     "address": host,
                     "port": int(port),
-                    "users": [{"id": uuid, "encryption": "none", "flow": flow}]
+                    "users": [{
+                        "id": uuid,
+                        "encryption": "none",
+                        "flow": flow
+                    }]
                 }]
             },
             "streamSettings": stream_settings
@@ -130,6 +128,7 @@ def generate_config(uuid, host, port, params):
 # ================= CORE =================
 
 def check_link(link, idx):
+    local_port = 20000 + idx  # ✅ уникальный порт
     temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
     process = None
 
@@ -144,9 +143,9 @@ def check_link(link, idx):
         params = urllib.parse.parse_qs(parsed.query)
 
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
-        print(f"[*] {remark} ({host}:{port})")
+        print(f"[*] {remark}")
 
-        config = generate_config(uuid, host, port, params)
+        config = generate_config(uuid, host, port, params, local_port)
 
         os.makedirs(TEMP_DIR, exist_ok=True)
         with open(temp_config, "w") as f:
@@ -158,13 +157,13 @@ def check_link(link, idx):
             stderr=subprocess.DEVNULL
         )
 
-        if not wait_socks():
+        if not wait_socks(local_port):
             print("[-] Xray не стартовал")
             return False
 
         proxies = {
-            "http": "socks5h://127.0.0.1:10808",
-            "https": "socks5h://127.0.0.1:10808"
+            "http": f"socks5h://127.0.0.1:{local_port}",
+            "https": f"socks5h://127.0.0.1:{local_port}"
         }
 
         if test_proxy(proxies):
@@ -180,6 +179,7 @@ def check_link(link, idx):
         if process:
             process.terminate()
             process.wait()
+
         if os.path.exists(temp_config):
             os.remove(temp_config)
 
@@ -203,7 +203,6 @@ def main():
         print("targets.txt не найден")
         return
 
-    # 🔥 очищаем файл каждый запуск
     open(RESULTS_FILE, "w").close()
 
     with open(TARGETS_PATH) as f:
