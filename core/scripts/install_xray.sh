@@ -1,8 +1,11 @@
 #!/bin/bash
-VERSION=$(curl -s https://github.com | jq -r .tag_name)
-PLATFORM="linux-64" # или darwin-64 / windows-64
-URL="https://github.com{VERSION}/Xray-${PLATFORM}.zip"
+set -e
+# Получаем последнюю версию
+VERSION=$(curl -s https://github.com | grep tag_name | cut -d '"' -f 4)
+echo "Downloading Xray $VERSION..."
+URL="https://github.com{VERSION}/Xray-linux-64.zip"
 
-curl -L -o xray.zip $URL
-unzip xray.zip -d ./core
+curl -L -o xray.zip "$URL"
+unzip -o xray.zip -d ./core
 chmod +x ./core/xray
+echo "Xray installed to ./core/xray"
