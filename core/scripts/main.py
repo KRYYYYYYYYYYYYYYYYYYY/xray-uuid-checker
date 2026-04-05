@@ -7,6 +7,7 @@ import urllib.parse
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
+import urllib3
 
 # ================= CONFIG =================
 
@@ -31,13 +32,14 @@ HEADERS = {
 
 lock = Lock()
 session = requests.Session()
-
+session.verify = False  # Все запросы будут без проверки SSL
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # подавляем предупреждения
 
 # ================= UTILS =================
 
 def load_whitelist_or_exit():
     try:
-        r = requests.get(WHITELIST_URL, timeout=10)
+        r = session.get(WHITELIST_URL, timeout=10)
         domains = [
             f"https://{d.strip()}"
             for d in r.text.splitlines()
@@ -65,7 +67,6 @@ def wait_socks(port=10808, timeout=5):
             time.sleep(0.1)
     return False
 
-
 def load_whitelist(retries=3):
     for i in range(retries):
         try:
@@ -82,9 +83,7 @@ def load_whitelist(retries=3):
             time.sleep(1)
     return None
 
-
 WHITELIST = load_whitelist()
-
 
 def test_urls(proxies, urls):
     for url in urls:
@@ -93,8 +92,7 @@ def test_urls(proxies, urls):
                 url,
                 proxies=proxies,
                 timeout=10,
-                headers=HEADERS,
-                verify=False
+                headers=HEADERS
             )
 
             if r.status_code < 500:
@@ -105,10 +103,8 @@ def test_urls(proxies, urls):
 
     return False
 
-
 def test_proxy(proxies):
     return test_urls(proxies, WHITELIST[:10])
-
 
 # ================= XRAY =================
 
@@ -149,7 +145,6 @@ def generate_config(uuid, host, port, params):
             "streamSettings": stream_settings
         }]
     }
-
 
 # ================= CORE =================
 
@@ -209,7 +204,6 @@ def check_link(link, idx):
 
     return False
 
-
 # ================= SAVE =================
 
 def load_existing():
@@ -218,9 +212,7 @@ def load_existing():
     with open(RESULTS_FILE) as f:
         return set(l.strip() for l in f)
 
-
 existing = load_existing()
-
 
 def save(link):
     with lock:
@@ -231,7 +223,6 @@ def save(link):
             f.write(link + "\n")
         existing.add(link)
         print("[SAVE]")
-
 
 # ================= MAIN =================
 
@@ -252,7 +243,6 @@ def main():
             link = futures[f]
             if f.result():
                 save(link)
-
 
 if __name__ == "__main__":
     main()
