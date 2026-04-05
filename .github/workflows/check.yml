@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Install Xray Core
-        run: bash scripts/install_xray.sh
+        run: bash ./scripts/install_xray.sh # Добавь ./ для надежности
 
       - name: Set up Python
         uses: actions/setup-python@v4
