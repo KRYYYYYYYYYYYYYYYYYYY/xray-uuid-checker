@@ -1,1 +1,50 @@
-
+{
+  "max_handshake_ms": 1200,
+  "mimic_dpi_delay": true,
+  "target_mtu": 1280,
+  "probe_attempts": 3,
+  "min_success": 1,
+  "l7_min_success": 1,
+  "profile_preset": "mobile_strict",
+  "reality_probe_attempts": 3,
+  "reality_timeout": 2.0,
+  "reality_reject_threshold": 1,
+  "ws_probe_attempts": 3,
+  "ws_timeout": 2.0,
+  "l7_max_candidates": 2,
+  "workers": 16,
+  "batch_multiplier": 2,
+  "max_parallel_per_host": 1,
+  "max_check_duration_sec": 3600,
+  "max_latency_ms": 2000,
+  "recv_timeout": 0.9,
+  "between_attempts_sleep": 0.2,
+  "mobile_whitelist_enabled": true,
+  "mobile_whitelist_fail_open": false,
+  "mobile_whitelist_timeout_sec": 10,
+  "mobile_whitelist_retries": 2,
+  "mobile_whitelist_retry_sleep_sec": 1,
+  "mobile_whitelist_retry_interval_sec": 30,
+  "external_respect_blacklist": true,
+  "mobile_whitelist_domains_url": "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt",
+  "mobile_whitelist_ips_url": "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/ipwhitelist.txt",
+  "mobile_whitelist_cidrs_url": "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/cidrwhitelist.txt",
+  "server_stats_enabled": false,
+  "server_stats_identifier_mode": "uuid",
+  "xray_api_host": "127.0.0.1",
+  "xray_api_port": 10085,
+  "xray_stats_min_downlink_bytes": 1,
+  "xray_sqlite_db_path": "",
+  "xray_sqlite_table": "users",
+  "xray_sqlite_column": "email",
+  "mobile_header_profiles": [
+    {
+      "user_agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36",
+      "headers": {
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8"
+      }
+    }
+  ],
+  "probe_paths": ["/generate_204"]
+}
