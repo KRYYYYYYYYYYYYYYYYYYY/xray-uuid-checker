@@ -20,9 +20,6 @@ MAX_WORKERS = 10
 
 WHITELIST_URL = "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt"
 
-MOBILE_WHITELIST_ENABLED = True
-MOBILE_WHITELIST_FAIL_OPEN = False
-
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36",
     "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8"
@@ -32,10 +29,10 @@ HEADERS = {
 
 lock = Lock()
 session = requests.Session()
-session.verify = False  # Все запросы будут без проверки SSL
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)  # подавляем предупреждения
+session.verify = False
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# ================= UTILS =================
+# ================= WHITELIST =================
 
 def load_whitelist_or_exit():
     try:
@@ -58,6 +55,8 @@ def load_whitelist_or_exit():
 
 WHITELIST = load_whitelist_or_exit()
 
+# ================= UTILS =================
+
 def wait_socks(port=10808, timeout=5):
     for _ in range(timeout * 10):
         try:
@@ -66,24 +65,6 @@ def wait_socks(port=10808, timeout=5):
         except:
             time.sleep(0.1)
     return False
-
-def load_whitelist(retries=3):
-    for i in range(retries):
-        try:
-            r = session.get(WHITELIST_URL, timeout=10)
-            domains = [
-                f"https://{d.strip()}"
-                for d in r.text.splitlines()
-                if d.strip()
-            ]
-            print(f"[+] Whitelist загружен: {len(domains)} доменов")
-            return domains
-        except Exception as e:
-            print(f"[!] Ошибка whitelist ({i+1}): {e}")
-            time.sleep(1)
-    return None
-
-WHITELIST = load_whitelist()
 
 def test_urls(proxies, urls):
     for url in urls:
@@ -95,7 +76,7 @@ def test_urls(proxies, urls):
                 headers=HEADERS
             )
 
-            if r.status_code < 500:
+            if r.status_code in [200, 204, 301, 302]:
                 return True
 
         except:
@@ -206,23 +187,14 @@ def check_link(link, idx):
 
 # ================= SAVE =================
 
-def load_existing():
-    if not os.path.exists(RESULTS_FILE):
-        return set()
-    with open(RESULTS_FILE) as f:
-        return set(l.strip() for l in f)
-
-existing = load_existing()
-
 def save(link):
     with lock:
-        if link in existing:
-            return
         os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
+
         with open(RESULTS_FILE, "a") as f:
-            f.write(link + "\n")
-        existing.add(link)
-        print("[SAVE]")
+            f.write(link.strip() + "\n")
+
+        print("[SAVE OK]")
 
 # ================= MAIN =================
 
@@ -230,6 +202,9 @@ def main():
     if not os.path.exists(TARGETS_PATH):
         print("targets.txt не найден")
         return
+
+    # 🔥 очищаем файл каждый запуск
+    open(RESULTS_FILE, "w").close()
 
     with open(TARGETS_PATH) as f:
         links = [l.strip() for l in f if l.strip()]
