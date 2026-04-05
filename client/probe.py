@@ -1,6 +1,27 @@
 import subprocess
 import time
 import socket
+import requests
+import random
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+WHITELIST_URL = "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt"
+
+
+def load_whitelist():
+    try:
+        r = requests.get(WHITELIST_URL, timeout=10)
+        domains = [d.strip() for d in r.text.splitlines() if d.strip()]
+        print(f"[+] Whitelist: {len(domains)} доменов")
+        return domains
+    except Exception as e:
+        print(f"[!] Ошибка загрузки whitelist: {e}")
+        return []
+
+
+WHITELIST = load_whitelist()
 
 
 def wait_socks(port=10808, timeout=5):
@@ -27,26 +48,36 @@ def run_test_connection(config_path):
             print("[-] Xray не поднялся")
             return False
 
-        print("[*] Проверка соединения...")
+        print("[*] Проверка через whitelist...")
 
-        curl_cmd = [
-            "curl",
-            "-x", "socks5h://127.0.0.1:10808",
-            "-I",  # только заголовки
-            "https://clients3.google.com/generate_204",
-            "--max-time", "10",
-            "-A", "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36"
-        ]
+        proxies = {
+            "http": "socks5h://127.0.0.1:10808",
+            "https": "socks5h://127.0.0.1:10808"
+        }
 
-        result = subprocess.run(curl_cmd, capture_output=True, text=True)
+        # берём случайные домены
+        test_domains = random.sample(WHITELIST, min(5, len(WHITELIST)))
 
-        if "204" in result.stdout or "200" in result.stdout:
-            print("[+] ПРОКСИ РАБОТАЕТ")
-            return True
-        else:
-            print("[-] Ответ невалидный:")
-            print(result.stdout)
-            return False
+        for domain in test_domains:
+            url = f"https://{domain}"
+
+            try:
+                r = requests.get(
+                    url,
+                    proxies=proxies,
+                    timeout=10,
+                    verify=False
+                )
+
+                if r.status_code < 500:
+                    print(f"[+] OK через {domain}")
+                    return True
+
+            except:
+                continue
+
+        print("[-] Ни один whitelist-домен не открылся")
+        return False
 
     finally:
         process.terminate()
