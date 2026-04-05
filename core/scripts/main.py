@@ -44,6 +44,7 @@ def load_whitelist():
     return domains
 
 WHITELIST = load_whitelist()
+WHITELIST_DOMAINS = {d.replace("https://", "").strip().lower() for d in WHITELIST}
 
 # ================= UTILS =================
 
@@ -58,17 +59,13 @@ def wait_socks(port, timeout=5):
 
 def test_proxy(proxies):
     success = 0
-    attempts = 5
-
     test_domains = WHITELIST[:20]
 
     for url in test_domains:
         try:
             r = session.get(url, proxies=proxies, timeout=10, headers=HEADERS)
-
             if r.status_code == 200:
                 success += 1
-
         except:
             continue
 
@@ -141,27 +138,18 @@ def check_link(link, idx):
         host = parsed.hostname
         port = parsed.port or 443
         params = urllib.parse.parse_qs(parsed.query)
-
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
 
-        # ================= SNI FILTER (КРИТИЧНО) =================
+        # ================= SNI FILTER =================
         sni = params.get('sni', [''])[0].lower()
-
-        # нормализуем whitelist: https://domain -> domain
-        whitelist_domains = {
-            d.replace("https://", "").strip().lower()
-            for d in WHITELIST
-        }
-
-        if not sni or sni not in whitelist_domains:
+        if not sni or sni not in WHITELIST_DOMAINS:
             print(f"[-] SKIP (SNI не в whitelist): {sni} | {remark}")
             return False
-        # ========================================================
+        # =================================================
 
         print(f"[*] {remark}")
 
         config = generate_config(uuid, host, port, params, local_port)
-
         os.makedirs(TEMP_DIR, exist_ok=True)
         with open(temp_config, "w") as f:
             json.dump(config, f)
@@ -205,13 +193,22 @@ def check_link(link, idx):
 def save(link):
     with lock:
         os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
-
         with open(RESULTS_FILE, "a") as f:
             f.write(link.strip() + "\n")
-
         print("[SAVE OK]")
 
 # ================= MAIN =================
+
+def fetch_links_from_url(url):
+    try:
+        r = session.get(url, timeout=15, headers=HEADERS)
+        r.raise_for_status()
+        lines = [l.strip() for l in r.text.splitlines() if l.strip()]
+        print(f"[+] Получено {len(lines)} ссылок из {url}")
+        return lines
+    except Exception as e:
+        print(f"[-] Ошибка загрузки подписки {url}: {e}")
+        return []
 
 def main():
     if not os.path.exists(TARGETS_PATH):
@@ -220,14 +217,23 @@ def main():
 
     open(RESULTS_FILE, "w").close()
 
+    links = []
     with open(TARGETS_PATH) as f:
-        links = [l.strip() for l in f if l.strip()]
+        for l in f:
+            l = l.strip()
+            if not l:
+                continue
+            # Проверяем на URL подписки
+            if l.startswith("http://") or l.startswith("https://"):
+                fetched = fetch_links_from_url(l)
+                links.extend(fetched)
+            else:
+                links.append(l)
 
-    print(f"[*] Всего: {len(links)}")
+    print(f"[*] Всего ссылок для проверки: {len(links)}")
 
     with ThreadPoolExecutor(MAX_WORKERS) as ex:
         futures = {ex.submit(check_link, link, i): link for i, link in enumerate(links)}
-
         for f in as_completed(futures):
             link = futures[f]
             if f.result():
