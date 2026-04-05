@@ -1,7 +1,60 @@
-import subprocess
+import os
+import json
 import time
 import socket
+import subprocess
+import urllib.parse
+import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
+# ================= CONFIG =================
+
+TARGETS_PATH = "targets.txt"
+RESULTS_FILE = "results/valid.txt"
+XRAY_BIN = "/usr/local/bin/xray"
+TEMP_DIR = "temp_configs"
+
+MAX_WORKERS = 10
+
+WHITELIST_URL = "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt"
+
+MOBILE_WHITELIST_ENABLED = True
+MOBILE_WHITELIST_FAIL_OPEN = False
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8"
+}
+
+# ================= GLOBAL =================
+
+lock = Lock()
+session = requests.Session()
+
+
+# ================= UTILS =================
+
+def load_whitelist_or_exit():
+    try:
+        r = requests.get(WHITELIST_URL, timeout=10)
+        domains = [
+            f"https://{d.strip()}"
+            for d in r.text.splitlines()
+            if d.strip()
+        ]
+
+        if not domains:
+            raise Exception("Whitelist пуст")
+
+        print(f"[+] Whitelist загружен: {len(domains)} доменов")
+        return domains
+
+    except Exception as e:
+        print(f"[FATAL] Не удалось загрузить whitelist: {e}")
+        exit(1)
+
+WHITELIST = load_whitelist_or_exit()
 
 def wait_socks(port=10808, timeout=5):
     for _ in range(timeout * 10):
@@ -13,41 +66,193 @@ def wait_socks(port=10808, timeout=5):
     return False
 
 
-def run_test_connection(config_path):
-    print("[*] Запуск Xray...")
+def load_whitelist(retries=3):
+    for i in range(retries):
+        try:
+            r = session.get(WHITELIST_URL, timeout=10)
+            domains = [
+                f"https://{d.strip()}"
+                for d in r.text.splitlines()
+                if d.strip()
+            ]
+            print(f"[+] Whitelist загружен: {len(domains)} доменов")
+            return domains
+        except Exception as e:
+            print(f"[!] Ошибка whitelist ({i+1}): {e}")
+            time.sleep(1)
+    return None
 
-    process = subprocess.Popen(
-        ["xray", "run", "-c", config_path],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
+
+WHITELIST = load_whitelist()
+
+
+def test_urls(proxies, urls):
+    for url in urls:
+        try:
+            r = session.get(
+                url,
+                proxies=proxies,
+                timeout=10,
+                headers=HEADERS,
+                verify=False
+            )
+
+            if r.status_code < 500:
+                return True
+
+        except:
+            continue
+
+    return False
+
+
+def test_proxy(proxies):
+    return test_urls(proxies, WHITELIST[:10])
+
+
+# ================= XRAY =================
+
+def generate_config(uuid, host, port, params):
+    security = params.get('security', ['none'])[0]
+    sni = params.get('sni', [''])[0]
+    pbk = params.get('pbk', [''])[0]
+    sid = params.get('sid', [''])[0]
+    fp = params.get('fp', ['chrome'])[0]
+    flow = params.get('flow', [''])[0]
+    net = params.get('type', ['tcp'])[0]
+
+    stream_settings = {"network": net, "security": security}
+
+    if security == "reality":
+        stream_settings["realitySettings"] = {
+            "serverName": sni,
+            "fingerprint": fp,
+            "publicKey": pbk,
+            "shortId": sid,
+            "spiderX": ""
+        }
+    elif security == "tls":
+        stream_settings["tlsSettings"] = {"serverName": sni}
+
+    return {
+        "log": {"loglevel": "none"},
+        "inbounds": [{"port": 10808, "listen": "127.0.0.1", "protocol": "socks"}],
+        "outbounds": [{
+            "protocol": "vless",
+            "settings": {
+                "vnext": [{
+                    "address": host,
+                    "port": int(port),
+                    "users": [{"id": uuid, "encryption": "none", "flow": flow}]
+                }]
+            },
+            "streamSettings": stream_settings
+        }]
+    }
+
+
+# ================= CORE =================
+
+def check_link(link, idx):
+    temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
+    process = None
 
     try:
-        if not wait_socks():
-            print("[-] Xray не поднялся")
+        parsed = urllib.parse.urlparse(link)
+        if parsed.scheme != "vless":
             return False
 
-        print("[*] Проверка соединения...")
+        uuid = parsed.username
+        host = parsed.hostname
+        port = parsed.port or 443
+        params = urllib.parse.parse_qs(parsed.query)
 
-        curl_cmd = [
-            "curl",
-            "-x", "socks5h://127.0.0.1:10808",
-            "-I",  # только заголовки
-            "https://clients3.google.com/generate_204",
-            "--max-time", "10",
-            "-A", "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36"
-        ]
+        remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
+        print(f"[*] {remark} ({host}:{port})")
 
-        result = subprocess.run(curl_cmd, capture_output=True, text=True)
+        config = generate_config(uuid, host, port, params)
 
-        if "204" in result.stdout or "200" in result.stdout:
-            print("[+] ПРОКСИ РАБОТАЕТ")
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        with open(temp_config, "w") as f:
+            json.dump(config, f)
+
+        process = subprocess.Popen(
+            [XRAY_BIN, "run", "-c", temp_config],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
+        if not wait_socks():
+            print("[-] Xray не стартовал")
+            return False
+
+        proxies = {
+            "http": "socks5h://127.0.0.1:10808",
+            "https": "socks5h://127.0.0.1:10808"
+        }
+
+        if test_proxy(proxies):
+            print(f"[+] OK: {remark}")
             return True
         else:
-            print("[-] Ответ невалидный:")
-            print(result.stdout)
-            return False
+            print(f"[-] FAIL: {remark}")
+
+    except Exception as e:
+        print(f"[-] Ошибка: {e}")
 
     finally:
-        process.terminate()
-        process.wait()
+        if process:
+            process.terminate()
+            process.wait()
+        if os.path.exists(temp_config):
+            os.remove(temp_config)
+
+    return False
+
+
+# ================= SAVE =================
+
+def load_existing():
+    if not os.path.exists(RESULTS_FILE):
+        return set()
+    with open(RESULTS_FILE) as f:
+        return set(l.strip() for l in f)
+
+
+existing = load_existing()
+
+
+def save(link):
+    with lock:
+        if link in existing:
+            return
+        os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
+        with open(RESULTS_FILE, "a") as f:
+            f.write(link + "\n")
+        existing.add(link)
+        print("[SAVE]")
+
+
+# ================= MAIN =================
+
+def main():
+    if not os.path.exists(TARGETS_PATH):
+        print("targets.txt не найден")
+        return
+
+    with open(TARGETS_PATH) as f:
+        links = [l.strip() for l in f if l.strip()]
+
+    print(f"[*] Всего: {len(links)}")
+
+    with ThreadPoolExecutor(MAX_WORKERS) as ex:
+        futures = {ex.submit(check_link, link, i): link for i, link in enumerate(links)}
+
+        for f in as_completed(futures):
+            link = futures[f]
+            if f.result():
+                save(link)
+
+
+if __name__ == "__main__":
+    main()
