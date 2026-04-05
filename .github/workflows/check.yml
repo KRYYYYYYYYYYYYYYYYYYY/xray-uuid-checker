@@ -31,6 +31,8 @@ jobs:
         run: |
           git config --global user.name "UUID-Checker-Bot"
           git config --global user.email "bot@github.com"
-          git add results/valid.txt
-          git commit -m "Update valid UUIDs [skip ci]" || echo "No changes to commit"
-          git push
+          git add results/valid.txt || true
+          # Пушим только если файл изменился и он не пустой
+          if [ -s results/valid.txt ]; then
+            git diff --quiet && git diff --staged --quiet || (git commit -m "Update valid UUIDs [skip ci]" && git push)
+          fi
