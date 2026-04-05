@@ -1,6 +1,4 @@
 grpcio==1.62.1
 grpcio-tools==1.62.1
-v2ray-python==0.1.2
+requests[socks]==2.31.0
 pyyaml==6.0.1
-requests==2.31.0
-
