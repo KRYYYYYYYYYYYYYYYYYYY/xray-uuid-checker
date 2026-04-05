@@ -1,32 +1,48 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-mkdir -p ./core
+# Install latest stable Xray binary on Linux runners.
+# Designed for GitHub Actions (non-interactive).
 
-# Фиксированная версия, чтобы не зависеть от капризов API GitHub
-VERSION="v1.8.24"
-URL="https://github.com{VERSION}/Xray-linux-64.zip"
-
-echo "[*] Попытка скачивания: $URL"
-
-# Используем флаг -sS (silent, но показывать ошибки) и -L (редиректы)
-if curl -sSL -o xray.zip "$URL"; then
-    echo "[+] Файл xray.zip успешно скачан."
-else
-    echo "[!] Ошибка при скачивании. Проверь URL или интернет."
+ARCH="$(uname -m)"
+case "${ARCH}" in
+  x86_64|amd64) ASSET="Xray-linux-64.zip" ;;
+  aarch64|arm64) ASSET="Xray-linux-arm64-v8a.zip" ;;
+  *)
+    echo "Unsupported architecture: ${ARCH}" >&2
     exit 1
+    ;;
+esac
+
+SUDO=""
+if [ "$(id -u)" -ne 0 ]; then
+  SUDO="sudo"
 fi
 
-echo "[*] Распаковка в ./core..."
-unzip -o xray.zip -d ./core
+TMP_DIR="$(mktemp -d)"
+cleanup() {
+  rm -rf "${TMP_DIR}"
+}
+trap cleanup EXIT
 
-if [ -f "./core/xray" ]; then
-    chmod +x ./core/xray
-    echo "[SUCCESS] Xray установлен:"
-    ./core/xray version
-else
-    echo "[ERROR] Бинарник xray не найден!"
-    exit 1
+echo "Resolving latest Xray release asset: ${ASSET}"
+XRAY_URL="$(
+  curl -fsSL "https://api.github.com/repos/XTLS/Xray-core/releases/latest" \
+  | grep -Eo "\"browser_download_url\": *\"[^\"]*${ASSET}\"" \
+  | head -n1 \
+  | sed -E 's/.*"browser_download_url": *"([^"]+)".*/\1/'
+)"
+
+if [ -z "${XRAY_URL}" ]; then
+  echo "Could not resolve latest Xray download URL for ${ASSET}" >&2
+  exit 1
 fi
 
-rm -f xray.zip
+echo "Downloading: ${XRAY_URL}"
+curl -fL "${XRAY_URL}" -o "${TMP_DIR}/${ASSET}"
+
+unzip -o "${TMP_DIR}/${ASSET}" -d "${TMP_DIR}/xray" >/dev/null
+${SUDO} install -m 0755 "${TMP_DIR}/xray/xray" /usr/local/bin/xray
+
+echo "Installed Xray to /usr/local/bin/xray"
+/usr/local/bin/xray version
