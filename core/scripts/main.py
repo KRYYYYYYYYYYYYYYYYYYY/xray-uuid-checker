@@ -1,29 +1,118 @@
+import os
 import json
 import time
-import os
+import socket
 import subprocess
-import requests
 import urllib.parse
+import requests
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import Lock
 
-CONFIG_PATH = 'config_test.json'
-TARGETS_PATH = 'targets.txt'
+# ================= CONFIG =================
+
+TARGETS_PATH = "targets.txt"
 RESULTS_FILE = "results/valid.txt"
-XRAY_BIN = "/usr/local/bin/xray" 
-TEMP_CONFIG = "temp_client_config.json"
+XRAY_BIN = "/usr/local/bin/xray"
+TEMP_DIR = "temp_configs"
 
-def save_result(link):
-    os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
-    existing = []
-    if os.path.exists(RESULTS_FILE):
-        with open(RESULTS_FILE, "r", encoding="utf-8") as f:
-            existing = [l.strip() for l in f]
-    if link not in existing:
-        with open(RESULTS_FILE, "a", encoding="utf-8") as f:
-            f.write(link + "\n")
-        print(f"[SUCCESS] Добавлено в {RESULTS_FILE}")
+MAX_WORKERS = 10
 
-def generate_temp_config(uuid, host, port, params):
-    # Извлекаем параметры безопасности
+WHITELIST_URL = "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt"
+
+MOBILE_WHITELIST_ENABLED = True
+MOBILE_WHITELIST_FAIL_OPEN = False
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36",
+    "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8"
+}
+
+# ================= GLOBAL =================
+
+lock = Lock()
+session = requests.Session()
+
+
+# ================= UTILS =================
+
+def load_whitelist_or_exit():
+    try:
+        r = requests.get(WHITELIST_URL, timeout=10)
+        domains = [
+            f"https://{d.strip()}"
+            for d in r.text.splitlines()
+            if d.strip()
+        ]
+
+        if not domains:
+            raise Exception("Whitelist пуст")
+
+        print(f"[+] Whitelist загружен: {len(domains)} доменов")
+        return domains
+
+    except Exception as e:
+        print(f"[FATAL] Не удалось загрузить whitelist: {e}")
+        exit(1)
+
+WHITELIST = load_whitelist_or_exit()
+
+def wait_socks(port=10808, timeout=5):
+    for _ in range(timeout * 10):
+        try:
+            with socket.create_connection(("127.0.0.1", port), timeout=1):
+                return True
+        except:
+            time.sleep(0.1)
+    return False
+
+
+def load_whitelist(retries=3):
+    for i in range(retries):
+        try:
+            r = session.get(WHITELIST_URL, timeout=10)
+            domains = [
+                f"https://{d.strip()}"
+                for d in r.text.splitlines()
+                if d.strip()
+            ]
+            print(f"[+] Whitelist загружен: {len(domains)} доменов")
+            return domains
+        except Exception as e:
+            print(f"[!] Ошибка whitelist ({i+1}): {e}")
+            time.sleep(1)
+    return None
+
+
+WHITELIST = load_whitelist()
+
+
+def test_urls(proxies, urls):
+    for url in urls:
+        try:
+            r = session.get(
+                url,
+                proxies=proxies,
+                timeout=10,
+                headers=HEADERS,
+                verify=False
+            )
+
+            if r.status_code < 500:
+                return True
+
+        except:
+            continue
+
+    return False
+
+
+def test_proxy(proxies):
+    return test_urls(proxies, WHITELIST[:10])
+
+
+# ================= XRAY =================
+
+def generate_config(uuid, host, port, params):
     security = params.get('security', ['none'])[0]
     sni = params.get('sni', [''])[0]
     pbk = params.get('pbk', [''])[0]
@@ -52,8 +141,8 @@ def generate_temp_config(uuid, host, port, params):
             "protocol": "vless",
             "settings": {
                 "vnext": [{
-                    "address": host, 
-                    "port": int(port), 
+                    "address": host,
+                    "port": int(port),
                     "users": [{"id": uuid, "encryption": "none", "flow": flow}]
                 }]
             },
@@ -61,56 +150,109 @@ def generate_temp_config(uuid, host, port, params):
         }]
     }
 
-def check_vless_link(link):
+
+# ================= CORE =================
+
+def check_link(link, idx):
+    temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
     process = None
+
     try:
-        # Умный парсинг через urllib
         parsed = urllib.parse.urlparse(link)
-        if parsed.scheme != 'vless': return False
-        
+        if parsed.scheme != "vless":
+            return False
+
         uuid = parsed.username
         host = parsed.hostname
         port = parsed.port or 443
-        # Вытаскиваем параметры (?security=reality&sni=...)
         params = urllib.parse.parse_qs(parsed.query)
-        # Название из фрагмента (#Name)
+
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
-        
-        print(f"[*] Проверка: {remark} ({host}:{port}) | Sec: {params.get('security',['none'])[0]}")
+        print(f"[*] {remark} ({host}:{port})")
 
-        with open(TEMP_CONFIG, 'w') as f:
-            json.dump(generate_temp_config(uuid, host, port, params), f)
-        
-        process = subprocess.Popen([XRAY_BIN, "run", "-c", TEMP_CONFIG], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        time.sleep(3) 
+        config = generate_config(uuid, host, port, params)
 
-        proxies = {'http': 'socks5h://127.0.0.1:10808', 'https': 'socks5h://127.0.0.1:10808'}
-        # Точный URL для 204
-        resp = requests.get("http://gstatic.com", proxies=proxies, timeout=12)
-        
-        if resp.status_code == 204:
-            print(f"[+] {remark}: РАБОТАЕТ")
+        os.makedirs(TEMP_DIR, exist_ok=True)
+        with open(temp_config, "w") as f:
+            json.dump(config, f)
+
+        process = subprocess.Popen(
+            [XRAY_BIN, "run", "-c", temp_config],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
+        if not wait_socks():
+            print("[-] Xray не стартовал")
+            return False
+
+        proxies = {
+            "http": "socks5h://127.0.0.1:10808",
+            "https": "socks5h://127.0.0.1:10808"
+        }
+
+        if test_proxy(proxies):
+            print(f"[+] OK: {remark}")
             return True
         else:
-            print(f"[-] {remark}: Ошибка (Status: {resp.status_code})")
+            print(f"[-] FAIL: {remark}")
+
     except Exception as e:
         print(f"[-] Ошибка: {e}")
+
     finally:
         if process:
             process.terminate()
             process.wait()
-        if os.path.exists(TEMP_CONFIG):
-            os.remove(TEMP_CONFIG)
+        if os.path.exists(temp_config):
+            os.remove(temp_config)
+
     return False
 
-if __name__ == "__main__":
-    if not os.path.exists(TARGETS_PATH):
-        print(f"[!] {TARGETS_PATH} не найден!"); exit(1)
 
-    with open(TARGETS_PATH, 'r') as f:
+# ================= SAVE =================
+
+def load_existing():
+    if not os.path.exists(RESULTS_FILE):
+        return set()
+    with open(RESULTS_FILE) as f:
+        return set(l.strip() for l in f)
+
+
+existing = load_existing()
+
+
+def save(link):
+    with lock:
+        if link in existing:
+            return
+        os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
+        with open(RESULTS_FILE, "a") as f:
+            f.write(link + "\n")
+        existing.add(link)
+        print("[SAVE]")
+
+
+# ================= MAIN =================
+
+def main():
+    if not os.path.exists(TARGETS_PATH):
+        print("targets.txt не найден")
+        return
+
+    with open(TARGETS_PATH) as f:
         links = [l.strip() for l in f if l.strip()]
-        
-    print(f"[*] Найдено ссылок: {len(links)}")
-    for link in links:
-        if check_vless_link(link):
-            save_result(link)
+
+    print(f"[*] Всего: {len(links)}")
+
+    with ThreadPoolExecutor(MAX_WORKERS) as ex:
+        futures = {ex.submit(check_link, link, i): link for i, link in enumerate(links)}
+
+        for f in as_completed(futures):
+            link = futures[f]
+            if f.result():
+                save(link)
+
+
+if __name__ == "__main__":
+    main()
