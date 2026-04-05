@@ -128,7 +128,7 @@ def generate_config(uuid, host, port, params, local_port):
 # ================= CORE =================
 
 def check_link(link, idx):
-    local_port = 20000 + idx  # ✅ уникальный порт
+    local_port = 20000 + idx
     temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
     process = None
 
@@ -143,6 +143,21 @@ def check_link(link, idx):
         params = urllib.parse.parse_qs(parsed.query)
 
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
+
+        # ================= SNI FILTER (КРИТИЧНО) =================
+        sni = params.get('sni', [''])[0].lower()
+
+        # нормализуем whitelist: https://domain -> domain
+        whitelist_domains = {
+            d.replace("https://", "").strip().lower()
+            for d in WHITELIST
+        }
+
+        if not sni or sni not in whitelist_domains:
+            print(f"[-] SKIP (SNI не в whitelist): {sni} | {remark}")
+            return False
+        # ========================================================
+
         print(f"[*] {remark}")
 
         config = generate_config(uuid, host, port, params, local_port)
