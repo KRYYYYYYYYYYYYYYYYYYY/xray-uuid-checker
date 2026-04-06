@@ -11,13 +11,24 @@ import urllib3
 
 # ================= LOAD CONFIG =================
 
-CONFIG_PATH = "config_test.json"
+CONFIG_PATH_CANDIDATES = (
+    "config_test.json",
+    os.path.join("client", "config_test.json"),
+)
 
-if os.path.exists(CONFIG_PATH):
-    with open(CONFIG_PATH) as f:
-        CFG = json.load(f)
-else:
-    CFG = {}
+
+def load_runtime_config():
+    for path in CONFIG_PATH_CANDIDATES:
+        if os.path.exists(path):
+            with open(path) as f:
+                cfg = json.load(f)
+            print(f"📦 config: {path}")
+            return cfg
+    print("⚠️ config_test.json не найден, используются значения по умолчанию")
+    return {}
+
+
+CFG = load_runtime_config()
 
 # ================= CONFIG =================
 
@@ -39,16 +50,18 @@ WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
     "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/outside-kvas.lst",
     "https://raw.githubusercontent.com/KRYYYYYYYYYYYYYYYYYYY/xray-uuid-checker/refs/heads/main/Wl2.txt",
-    
 ]
 
-# 👉 НОРМАЛЬНЫЕ L7 TEST URL (НЕ whitelist)
-TEST_URLS = [
+# L7 endpoint'ы (только проверка факта HTTP-доступа)
+TEST_URLS = CFG.get("l7_test_urls") or [
     "https://www.gstatic.com/generate_204",
+    "https://connectivitycheck.gstatic.com/generate_204",
+    "https://www.google.com/generate_204",
 ]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
+STRICT_SNI_WHITELIST = CFG.get("mobile_whitelist_strict", True)
 
 # ================= GLOBAL =================
 
@@ -61,6 +74,16 @@ success_count = 0
 
 # ================= WHITELIST =================
 
+def normalize_domain(raw_domain):
+    if not raw_domain:
+        return ""
+    val = raw_domain.strip().lower()
+    if not val or val.startswith("#"):
+        return ""
+    val = val.replace("https://", "").replace("http://", "")
+    return val.split("/")[0].strip().strip(".")
+
+
 def load_whitelist():
     domains = set()
 
@@ -72,9 +95,9 @@ def load_whitelist():
             r.raise_for_status()
 
             for line in r.text.splitlines():
-                d = line.strip()
-                if d and not d.startswith("#"):
-                    domains.add(d.lower())
+                domain = normalize_domain(line)
+                if domain:
+                    domains.add(domain)
 
             print(f"📥 whitelist: {url}")
 
@@ -105,14 +128,13 @@ def wait_socks(port, timeout=5):
     return False, None
 
 def test_proxy(proxies):
-    # ✅ теперь тестим реальные endpoint'ы, а не whitelist
     for url in TEST_URLS:
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=RECV_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
 
-            if r.status_code in (200, 204):
+            if r.status_code:
                 return True, latency
 
         except:
@@ -194,7 +216,9 @@ def check_link(link, idx):
             return False, "❌ нет SNI"
 
         if sni not in WHITELIST_DOMAINS:
-            return False, f"🚫 SNI вне whitelist"
+            if STRICT_SNI_WHITELIST:
+                return False, "🚫 SNI вне whitelist"
+            print(f"⚠️ [{idx}] SNI не в whitelist: {sni}")
 
         print(f"🔍 [{idx}] {remark}")
 
@@ -242,7 +266,11 @@ def check_link(link, idx):
     finally:
         if process:
             process.terminate()
-            process.wait()
+            try:
+                process.wait(timeout=2)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=2)
 
         if os.path.exists(temp_config):
             os.remove(temp_config)
@@ -284,15 +312,21 @@ def main():
     open(RESULTS_FILE, "w").close()
 
     links = []
+    seen = set()
     with open(TARGETS_PATH) as f:
         for l in f:
             l = l.strip()
             if not l:
                 continue
             if l.startswith("http"):
-                links.extend(fetch_links_from_url(l))
+                for remote_link in fetch_links_from_url(l):
+                    if remote_link not in seen:
+                        seen.add(remote_link)
+                        links.append(remote_link)
             else:
-                links.append(l)
+                if l not in seen:
+                    seen.add(l)
+                    links.append(l)
 
     print(f"🚀 всего: {len(links)}\n")
 
