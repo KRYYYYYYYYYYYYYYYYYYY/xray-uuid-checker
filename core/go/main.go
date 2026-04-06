@@ -81,26 +81,34 @@ func buildXrayConfig(vlessLink string, localPort int) ([]byte, error) {
 		"security": security,
 	}
 	if security == "tls" {
-		streamSettings["tlsSettings"] = map[string]any{"serverName": sni}
+		tlsSettings := map[string]any{"serverName": sni, "fingerprint": "chrome"}
+		if alpns := normalizeALPN(q.Get("alpn")); len(alpns) > 0 {
+			tlsSettings["alpn"] = alpns
+		}
+		streamSettings["tlsSettings"] = tlsSettings
 	}
 	if security == "reality" {
-		streamSettings["realitySettings"] = map[string]any{
+		realitySettings := map[string]any{
 			"serverName":  sni,
 			"fingerprint": fallback(q.Get("fp"), "chrome"),
 			"publicKey":   q.Get("pbk"),
 			"shortId":     q.Get("sid"),
 			"spiderX":     "",
 		}
+		if alpns := normalizeALPN(q.Get("alpn")); len(alpns) > 0 {
+			realitySettings["alpn"] = alpns
+		}
+		streamSettings["realitySettings"] = realitySettings
 	}
 
 	cfg := map[string]any{
 		"log": map[string]any{"loglevel": "none"},
-		"inbounds": []map[string]any{ {
+		"inbounds": []map[string]any{{
 			"listen":   "127.0.0.1",
 			"port":     localPort,
 			"protocol": "socks",
 		}},
-		"outbounds": []map[string]any{ {
+		"outbounds": []map[string]any{{
 			"protocol": "vless",
 			"settings": map[string]any{
 				"vnext": []map[string]any{{
@@ -117,6 +125,35 @@ func buildXrayConfig(vlessLink string, localPort int) ([]byte, error) {
 	}
 
 	return json.MarshalIndent(cfg, "", "  ")
+}
+
+func normalizeALPN(raw string) []string {
+	if strings.TrimSpace(raw) == "" {
+		return nil
+	}
+	decoded := raw
+	for i := 0; i < 3; i++ {
+		v, err := url.QueryUnescape(decoded)
+		if err != nil || v == decoded {
+			break
+		}
+		decoded = v
+	}
+	replacer := strings.NewReplacer(";", ",", "|", ",", " ", ",")
+	decoded = replacer.Replace(decoded)
+	parts := strings.Split(decoded, ",")
+	allowed := map[string]bool{"h2": true, "http/1.1": true, "h3": true}
+	seen := map[string]bool{}
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.ToLower(strings.TrimSpace(p))
+		if p == "" || !allowed[p] || seen[p] {
+			continue
+		}
+		seen[p] = true
+		out = append(out, p)
+	}
+	return out
 }
 
 func fallback(v, def string) string {
