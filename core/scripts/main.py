@@ -59,7 +59,11 @@ TEMP_DIR = resolve_repo_path(CFG.get("temp_dir", "temp_configs"))
 MAX_WORKERS = CFG.get("workers", 20)
 LEGACY_L7_MAX_CANDIDATES = CFG.get("l7_max_candidates")
 MAX_SUCCESS = CFG.get("max_success", CFG.get("max_valid_links", 200))
-MAX_SUCCESS_PER_EGRESS_IP = max(0, int(CFG.get("max_success_per_egress_ip", 1)))
+# Дедупликация по egress IP отключена намеренно:
+# один и тот же серверный egress может обслуживать несколько валидных UUID.
+MAX_SUCCESS_PER_EGRESS_IP = 0
+if int(CFG.get("max_success_per_egress_ip", 0)) > 0:
+    print("⚠️ max_success_per_egress_ip в конфиге игнорируется: блокировка по одинаковому IP отключена")
 
 if "max_success" not in CFG and "max_valid_links" not in CFG:
     if isinstance(LEGACY_L7_MAX_CANDIDATES, int) and LEGACY_L7_MAX_CANDIDATES > 2:
@@ -532,7 +536,7 @@ def classify_result(ok, reason):
     return "unknown"
 
 
-def check_target_via_proxy(target, proxies):
+def check_target_via_proxy(target, proxies, expected_server_ip=""):
     url = target["url"]
     r, _, err = do_request(url, proxies)
     if err:
@@ -558,6 +562,14 @@ def check_target_via_proxy(target, proxies):
             return False, "bad_json"
         if expect_json_key not in data:
             return False, f"missing_json_key={expect_json_key}"
+        if (
+            STRICT_EGRESS_MATCH_SERVER_IP
+            and expected_server_ip
+            and expect_json_key == "ip"
+        ):
+            detected_ip = str(data.get(expect_json_key, "")).strip()
+            if detected_ip and detected_ip != expected_server_ip:
+                return False, f"ip_mismatch={detected_ip}!={expected_server_ip}"
     expect_headers = target.get("expect_headers") or {}
     for header_name, expected_value in expect_headers.items():
         actual = str(r.headers.get(header_name, "")).lower()
@@ -661,6 +673,10 @@ def run_validation_layers(proxies, expected_server_ip=""):
                     final_host = urllib.parse.urlparse(r.url).hostname or ""
                     if expected_host and final_host and expected_host != final_host:
                         continue
+                    server_header = str(r.headers.get("Server", "")).lower()
+                    forbidden_markers = STAGE_A_FORBIDDEN_SERVER_MARKERS.get(expected_host.lower(), [])
+                    if server_header and any(marker in server_header for marker in forbidden_markers):
+                        continue
                 stage_a_latencies.append(latency)
                 result["layer_trace"].append({"stage": "A_fallback", "url": url, "ok": True, "latency_ms": int(latency)})
                 break
@@ -680,7 +696,11 @@ def run_validation_layers(proxies, expected_server_ip=""):
     stage_b_passed = False
     for target in STAGE_B_TARGETS:
         try:
-            ok, reason = check_target_via_proxy(target, proxies)
+            ok, reason = check_target_via_proxy(
+                target,
+                proxies,
+                expected_server_ip=expected_server_ip,
+            )
             result["layer_trace"].append({
                 "stage": "B",
                 "url": target["url"],
@@ -701,7 +721,11 @@ def run_validation_layers(proxies, expected_server_ip=""):
         passed = 0
         for target in REAL_WORLD_TARGETS:
             try:
-                ok, reason = check_target_via_proxy(target, proxies)
+                ok, reason = check_target_via_proxy(
+                    target,
+                    proxies,
+                    expected_server_ip=expected_server_ip,
+                )
                 result["layer_trace"].append({
                     "stage": "F",
                     "url": target["url"],
@@ -737,7 +761,11 @@ def run_validation_layers(proxies, expected_server_ip=""):
         passed = 0
         for target in NEGATIVE_PROBE_TARGETS:
             try:
-                ok, reason = check_target_via_proxy(target, proxies)
+                ok, reason = check_target_via_proxy(
+                    target,
+                    proxies,
+                    expected_server_ip=expected_server_ip,
+                )
                 result["layer_trace"].append({
                     "stage": "H",
                     "url": target["url"],
