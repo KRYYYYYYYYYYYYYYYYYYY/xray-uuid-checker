@@ -16,7 +16,6 @@
   "l7_stage_b_enabled": false,
   "l7_stage_a_urls": [
     "https://www.gstatic.com/generate_204",
-    "https://connectivitycheck.gstatic.com/generate_204"
   ],
   "mimic_dpi_delay_min_sec": 0.08,
   "mimic_dpi_delay_max_sec": 0.22,
