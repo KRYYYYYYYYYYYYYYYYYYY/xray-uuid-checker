@@ -153,6 +153,16 @@ def wait_socks(port, timeout=5):
 
     return False, None
 
+
+def get_param(params, key, default=""):
+    values = params.get(key)
+    if not values:
+        return default
+    # В VLESS-ссылках иногда встречаются дубли параметров (например sni/fp/flow).
+    # Используем "последнее значение побеждает", как в большинстве query string кейсов.
+    return values[-1]
+
+
 def test_proxy(proxies):
     stage_a_latencies = []
     stage_a_reason = "нет ответа stage A"
@@ -213,19 +223,19 @@ def test_proxy(proxies):
 # ================= XRAY =================
 
 def generate_config(uuid, host, port, params, local_port):
-    security = params.get('security', ['none'])[0]
-    sni = params.get('sni', [''])[0]
-    net = params.get('type', ['tcp'])[0]
-    flow = params.get('flow', [''])[0]
+    security = get_param(params, "security", "none")
+    sni = get_param(params, "sni", "")
+    net = get_param(params, "type", "tcp")
+    flow = get_param(params, "flow", "")
 
     stream_settings = {"network": net, "security": security}
 
     if security == "reality":
         stream_settings["realitySettings"] = {
             "serverName": sni,
-            "fingerprint": params.get('fp', ['chrome'])[0],
-            "publicKey": params.get('pbk', [''])[0],
-            "shortId": params.get('sid', [''])[0],
+            "fingerprint": get_param(params, "fp", "chrome"),
+            "publicKey": get_param(params, "pbk", ""),
+            "shortId": get_param(params, "sid", ""),
             "spiderX": ""
         }
 
@@ -234,14 +244,14 @@ def generate_config(uuid, host, port, params, local_port):
 
     if net == "ws":
         stream_settings["wsSettings"] = {
-            "path": params.get('path', ['/'])[0] or "/",
-            "headers": {"Host": params.get('host', [''])[0]} if params.get('host', [''])[0] else {}
+            "path": get_param(params, "path", "/") or "/",
+            "headers": {"Host": get_param(params, "host", "")} if get_param(params, "host", "") else {}
         }
     elif net == "grpc":
         stream_settings["grpcSettings"] = {
-            "serviceName": params.get('serviceName', [''])[0],
-            "authority": params.get('authority', [''])[0],
-            "multiMode": params.get('mode', ['gun'])[0] == "multi",
+            "serviceName": get_param(params, "serviceName", ""),
+            "authority": get_param(params, "authority", ""),
+            "multiMode": get_param(params, "mode", "gun") == "multi",
         }
 
     return {
@@ -296,7 +306,7 @@ def check_link(link, idx):
         if not uuid or not host:
             return False, "❌ битый VLESS (нет uuid/host)"
 
-        sni = params.get('sni', [''])[0].lower()
+        sni = get_param(params, "sni", "").lower()
 
         if not sni:
             return False, "❌ нет SNI"
