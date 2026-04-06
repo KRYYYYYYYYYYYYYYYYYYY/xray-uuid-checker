@@ -65,14 +65,18 @@ WHITELIST_URLS = [
     "https://raw.githubusercontent.com/KRYYYYYYYYYYYYYYYYYYY/xray-uuid-checker/refs/heads/main/Wl2.txt",
 ]
 
-# L7 endpoint'ы (только проверка факта HTTP-доступа)
-TEST_URLS = CFG.get("l7_test_urls") or [
-    "http://1.1.1.1",
-    "http://cp.cloudflare.com/generate_204",
-    "https://www.gstatic.com/generate_204",
+# Stage A: connectivity (проверка, что канал реально живой)
+STAGE_A_URLS = CFG.get("l7_stage_a_urls") or [
     "https://connectivitycheck.gstatic.com/generate_204",
+    "https://www.gstatic.com/generate_204",
+]
+STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
+
+# Stage B: stricter test (контрольный endpoint + latency threshold)
+STAGE_B_URLS = CFG.get("l7_stage_b_urls") or [
     "https://www.google.com/generate_204",
 ]
+STAGE_B_OK_STATUSES = set(CFG.get("l7_stage_b_ok_statuses", [200, 204]))
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
@@ -144,23 +148,47 @@ def wait_socks(port, timeout=5):
     return False, None
 
 def test_proxy(proxies):
-    last_error = "нет ответа от test_url"
+    stage_a_best_latency = None
+    stage_a_ok = False
+    stage_a_reason = "нет ответа stage A"
 
-    for url in TEST_URLS:
+    for url in STAGE_A_URLS:
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
 
-            if r.status_code:
-                return True, latency, f"{r.status_code} {url}"
-            last_error = f"empty_status {url}"
+            if r.status_code in STAGE_A_OK_STATUSES:
+                stage_a_ok = True
+                stage_a_reason = f"stageA {r.status_code} {url}"
+                if stage_a_best_latency is None or latency < stage_a_best_latency:
+                    stage_a_best_latency = latency
+                break
+            stage_a_reason = f"stageA bad_status={r.status_code} {url}"
 
         except Exception as e:
-            last_error = f"{type(e).__name__} {url}"
+            stage_a_reason = f"stageA {type(e).__name__} {url}"
             continue
 
-    return False, None, last_error
+    if not stage_a_ok:
+        return False, None, stage_a_reason
+
+    stage_b_reason = "нет ответа stage B"
+    for url in STAGE_B_URLS:
+        try:
+            t0 = time.time()
+            r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
+            latency = (time.time() - t0) * 1000
+
+            if r.status_code in STAGE_B_OK_STATUSES:
+                return True, latency, f"stageB {r.status_code} {url}"
+            stage_b_reason = f"stageB bad_status={r.status_code} {url}"
+        except Exception as e:
+            stage_b_reason = f"stageB {type(e).__name__} {url}"
+            continue
+
+    # Если stage B не прошёл, возвращаем причину stage B, но latency из stage A.
+    return False, stage_a_best_latency, stage_b_reason
 
 # ================= XRAY =================
 
