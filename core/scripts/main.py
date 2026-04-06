@@ -37,17 +37,33 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # ================= WHITELIST =================
 
 def load_whitelist():
-    r = session.get(WHITELIST_URLS, timeout=10)
-    domains = [f"https://{d.strip()}" for d in r.text.splitlines() if d.strip()]
+    domains = set()
+
+    for url in WHITELIST_URLS:
+        url = url.strip()
+        try:
+            r = session.get(url, timeout=10, headers=HEADERS)
+            r.raise_for_status()
+
+            for line in r.text.splitlines():
+                d = line.strip()
+                if not d or d.startswith("#"):
+                    continue
+                domains.add(d.lower())
+
+            print(f"[+] Загружен whitelist из {url}")
+
+        except Exception as e:
+            print(f"[-] Ошибка загрузки whitelist {url}: {e}")
 
     if not domains:
-        raise Exception("Whitelist пуст")
+        raise Exception("Whitelist пуст (ни один источник не загрузился)")
 
-    print(f"[+] Whitelist загружен: {len(domains)} доменов")
+    print(f"[+] Всего доменов в whitelist: {len(domains)}")
     return domains
 
-WHITELIST = load_whitelist()
-WHITELIST_DOMAINS = {d.replace("https://", "").strip().lower() for d in WHITELIST}
+WHITELIST_DOMAINS = load_whitelist()
+WHITELIST = [f"https://{d}" for d in WHITELIST_DOMAINS]
 
 # ================= UTILS =================
 
@@ -226,10 +242,8 @@ def main():
             l = l.strip()
             if not l:
                 continue
-            # Проверяем на URL подписки
             if l.startswith("http://") or l.startswith("https://"):
-                fetched = fetch_links_from_url(l)
-                links.extend(fetched)
+                links.extend(fetch_links_from_url(l))
             else:
                 links.append(l)
 
