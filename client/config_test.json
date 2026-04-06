@@ -45,6 +45,26 @@
   "stage_d_fail_open": false,
   "stage_d_retries": 3,
   "verify_ip_not_local": true,
+  "max_success_per_egress_ip": 1,
+  "real_world_check_enabled": true,
+  "real_world_min_success": 2,
+  "real_world_targets": [
+    {
+      "url": "https://www.wikipedia.org/",
+      "ok_statuses": [200],
+      "expect_contains": ["wikipedia"]
+    },
+    {
+      "url": "https://api.ipify.org?format=json",
+      "ok_statuses": [200],
+      "expect_json_key": "ip"
+    },
+    {
+      "url": "https://www.cloudflare.com/cdn-cgi/trace",
+      "ok_statuses": [200],
+      "expect_contains": ["h=", "ip=", "ts="]
+    }
+  ],
   "stability_attempts": 3,
   "stability_min_success": 2,
   "real_download_url": "https://speed.cloudflare.com/__down?bytes=1048576",

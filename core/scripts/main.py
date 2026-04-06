@@ -297,6 +297,25 @@ REAL_DOWNLOAD_MIN_BYTES = int(CFG.get("real_download_min_bytes", 300 * 1024))
 REAL_DOWNLOAD_MIN_KBPS = int(CFG.get("real_download_min_kbps", 32))
 STAGE_D_FAIL_OPEN = CFG.get("stage_d_fail_open", False)
 STAGE_D_RETRIES = max(1, int(CFG.get("stage_d_retries", 2)))
+REAL_WORLD_CHECK_ENABLED = CFG.get("real_world_check_enabled", True)
+REAL_WORLD_TARGETS = build_stage_b_targets(CFG.get("real_world_targets") or [
+    {
+        "url": "https://www.wikipedia.org/",
+        "ok_statuses": [200],
+        "expect_contains": ["wikipedia"],
+    },
+    {
+        "url": "https://api.ipify.org?format=json",
+        "ok_statuses": [200],
+        "expect_json_key": "ip",
+    },
+    {
+        "url": "https://www.cloudflare.com/cdn-cgi/trace",
+        "ok_statuses": [200],
+        "expect_contains": ["h=", "ip=", "ts="],
+    },
+])
+REAL_WORLD_MIN_SUCCESS = max(1, int(CFG.get("real_world_min_success", 2)))
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
@@ -436,6 +455,35 @@ def classify_result(ok, reason):
     return "unknown"
 
 
+def check_target_via_proxy(target, proxies):
+    url = target["url"]
+    r, _, err = do_request(url, proxies)
+    if err:
+        return False, "request_error"
+    expected_host = urllib.parse.urlparse(url).hostname or ""
+    final_host = urllib.parse.urlparse(r.url).hostname or ""
+    body = (r.text or "")[:512].lower()
+    allowed_statuses = set(target.get("ok_statuses") or [200])
+    if r.status_code not in allowed_statuses:
+        return False, f"bad_status={r.status_code}"
+    if expected_host and final_host and expected_host != final_host:
+        return False, f"host_mismatch={expected_host}->{final_host}"
+    if expected_host and expected_host not in (final_host + body):
+        return False, "host_not_in_body"
+    expect_contains = [str(x).lower() for x in target.get("expect_contains", []) if str(x).strip()]
+    if expect_contains and not all(marker in body for marker in expect_contains):
+        return False, "missing_markers"
+    expect_json_key = str(target.get("expect_json_key", "")).strip()
+    if expect_json_key:
+        try:
+            data = r.json()
+        except Exception:
+            return False, "bad_json"
+        if expect_json_key not in data:
+            return False, f"missing_json_key={expect_json_key}"
+    return True, "ok"
+
+
 def run_validation_layers(proxies):
     result = {
         "ok": False,
@@ -502,39 +550,33 @@ def run_validation_layers(proxies):
 
     stage_b_passed = False
     for target in STAGE_B_TARGETS:
-        url = target["url"]
         try:
-            r, _, err = do_request(url, proxies)
-            if err:
-                continue
-            expected_host = urllib.parse.urlparse(url).hostname or ""
-            final_host = urllib.parse.urlparse(r.url).hostname or ""
-            body = (r.text or "")[:200].lower()
-            allowed_statuses = set(target.get("ok_statuses") or list(STAGE_B_OK_STATUSES))
-            if r.status_code not in allowed_statuses:
-                continue
-            if expected_host and final_host and expected_host != final_host:
-                continue
-            if expected_host and expected_host not in (final_host + body):
-                continue
-            expect_contains = [str(x).lower() for x in target.get("expect_contains", []) if str(x).strip()]
-            if expect_contains and not all(marker in body for marker in expect_contains):
-                continue
-            expect_json_key = str(target.get("expect_json_key", "")).strip()
-            if expect_json_key:
-                try:
-                    data = r.json()
-                except Exception:
-                    continue
-                if expect_json_key not in data:
-                    continue
-            stage_b_passed = True
-            break
+            ok, _ = check_target_via_proxy(target, proxies)
+            if ok:
+                stage_b_passed = True
+                break
         except Exception:
             continue
     if not stage_b_passed:
         result["reason"] = "stageB fallback_or_mismatch"
         return result
+
+    # Layer F: real-world browsing profile (несколько доменов, минимум N успешных)
+    if REAL_WORLD_CHECK_ENABLED and REAL_WORLD_TARGETS:
+        passed = 0
+        for target in REAL_WORLD_TARGETS:
+            try:
+                ok, _ = check_target_via_proxy(target, proxies)
+                if ok:
+                    passed += 1
+            except Exception:
+                continue
+        if passed < REAL_WORLD_MIN_SUCCESS:
+            result["reason"] = f"stageF real_world_failed {passed}/{len(REAL_WORLD_TARGETS)}"
+            return result
+        result["real_world_passed"] = passed
+    else:
+        result["real_world_passed"] = 0
 
     # Layer C: sustained traffic test (>=1MB endpoint)
     try:
@@ -937,6 +979,7 @@ def main():
         "🧪 L7 profile: "
         f"stage_a_all={L7_REQUIRE_STAGE_A_ALL}, "
         f"stage_b_enabled={L7_STAGE_B_ENABLED}({len(STAGE_B_TARGETS)} targets), "
+        f"real_world={REAL_WORLD_CHECK_ENABLED}({REAL_WORLD_MIN_SUCCESS}/{len(REAL_WORLD_TARGETS)}), "
         f"mimic_dpi_delay={MIMIC_DPI_DELAY}, "
         f"network_emu={NET_EMU_ENABLED}\n"
     )
