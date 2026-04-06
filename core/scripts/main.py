@@ -39,7 +39,18 @@ XRAY_BIN = "/usr/local/bin/xray"
 TEMP_DIR = "temp_configs"
 
 MAX_WORKERS = CFG.get("workers", 20)
-MAX_SUCCESS = CFG.get("l7_max_candidates", 200)
+LEGACY_L7_MAX_CANDIDATES = CFG.get("l7_max_candidates")
+MAX_SUCCESS = CFG.get("max_success", CFG.get("max_valid_links", 200))
+
+if "max_success" not in CFG and "max_valid_links" not in CFG:
+    if isinstance(LEGACY_L7_MAX_CANDIDATES, int) and LEGACY_L7_MAX_CANDIDATES > 2:
+        MAX_SUCCESS = LEGACY_L7_MAX_CANDIDATES
+    elif isinstance(LEGACY_L7_MAX_CANDIDATES, int) and LEGACY_L7_MAX_CANDIDATES <= 2:
+        print(
+            f"⚠️ l7_max_candidates={LEGACY_L7_MAX_CANDIDATES} выглядит как лимит этапа отбора, "
+            "не лимит результата; используется MAX_SUCCESS=200. "
+            "Задай max_success в config_test.json, если нужен другой предел."
+        )
 
 PROBE_ATTEMPTS = CFG.get("probe_attempts", 3)
 MAX_LATENCY = CFG.get("max_latency_ms", 2000)
@@ -356,6 +367,7 @@ def main():
                     links.append(l)
 
     print(f"🚀 всего: {len(links)}\n")
+    print(f"⚙️ workers={MAX_WORKERS}, max_success={MAX_SUCCESS}\n")
 
     with ThreadPoolExecutor(MAX_WORKERS) as ex:
         futures = {ex.submit(check_link, link, i): link for i, link in enumerate(links)}
