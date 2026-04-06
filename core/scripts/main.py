@@ -589,6 +589,13 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
+        alpn_raw = get_param(params, "alpn", "")
+        alpn_decoded = maybe_multi_unquote(alpn_raw)
+        if "%2" in alpn_decoded.lower():
+            metadata["reason"] = "❌ битый ALPN (многократное кодирование)"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
+
         sni = get_param(params, "sni", "").lower()
 
         if not sni:
