@@ -9,6 +9,16 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 import urllib3
 
+# ================= LOAD MOBILE CONFIG =================
+
+CONFIG_PATH = "config_test.json"
+
+if os.path.exists(CONFIG_PATH):
+    with open(CONFIG_PATH) as f:
+        CFG = json.load(f)
+else:
+    CFG = {}
+
 # ================= CONFIG =================
 
 TARGETS_PATH = "targets.txt"
@@ -16,17 +26,22 @@ RESULTS_FILE = "results/valid.txt"
 XRAY_BIN = "/usr/local/bin/xray"
 TEMP_DIR = "temp_configs"
 
-MAX_WORKERS = 10
+MAX_WORKERS = CFG.get("workers", 20)
+MAX_SUCCESS = CFG.get("l7_max_candidates", 200)
+
+PROBE_ATTEMPTS = CFG.get("probe_attempts", 3)
+MAX_LATENCY = CFG.get("max_latency_ms", 2000)
+HANDSHAKE_LIMIT = CFG.get("max_handshake_ms", 1200)
+RECV_TIMEOUT = CFG.get("recv_timeout", 1.0)
+SLEEP_BETWEEN = CFG.get("between_attempts_sleep", 0.2)
 
 WHITELIST_URLS = [
-    "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/outside-kvas.lst",
-    "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt",
-    "https://raw.githubusercontent.com/KRYYYYYYYYYYYYYYYYYYY/xray-uuid-checker/refs/heads/main/Wl2.txt",
+    CFG.get("mobile_whitelist_domains_url"),
+    "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/outside-kvas.lst"
 ]
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 Chrome/124.0.0.0 Mobile Safari/537.36"
-}
+HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
+HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
 
 # ================= GLOBAL =================
 
@@ -35,32 +50,34 @@ session = requests.Session()
 session.verify = False
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+success_count = 0
+
 # ================= WHITELIST =================
 
 def load_whitelist():
     domains = set()
 
     for url in WHITELIST_URLS:
-        url = url.strip()
+        if not url:
+            continue
         try:
-            r = session.get(url, timeout=10, headers=HEADERS)
+            r = session.get(url.strip(), timeout=10)
             r.raise_for_status()
 
             for line in r.text.splitlines():
                 d = line.strip()
-                if not d or d.startswith("#"):
-                    continue
-                domains.add(d.lower())
+                if d and not d.startswith("#"):
+                    domains.add(d.lower())
 
-            print(f"[+] Загружен whitelist из {url}")
+            print(f"📥 whitelist: {url}")
 
         except Exception as e:
-            print(f"[-] Ошибка загрузки whitelist {url}: {e}")
+            print(f"❌ whitelist fail: {url} → {e}")
 
     if not domains:
-        raise Exception("Whitelist пуст (ни один источник не загрузился)")
+        raise Exception("❌ whitelist пуст")
 
-    print(f"[+] Всего доменов в whitelist: {len(domains)}")
+    print(f"✅ доменов: {len(domains)}")
     return domains
 
 WHITELIST_DOMAINS = load_whitelist()
@@ -69,52 +86,58 @@ WHITELIST = [f"https://{d}" for d in WHITELIST_DOMAINS]
 # ================= UTILS =================
 
 def wait_socks(port, timeout=5):
+    start = time.time()
+
     for _ in range(timeout * 10):
         try:
             with socket.create_connection(("127.0.0.1", port), timeout=1):
-                return True
+                elapsed = (time.time() - start) * 1000
+                return True, elapsed
         except:
             time.sleep(0.1)
-    return False
+
+    return False, None
 
 def test_proxy(proxies):
     success = 0
-    test_domains = WHITELIST[:20]
+    latencies = []
 
-    for url in test_domains:
+    for url in WHITELIST[:10]:
         try:
-            r = session.get(url, proxies=proxies, timeout=10, headers=HEADERS)
+            t0 = time.time()
+            r = session.get(url, proxies=proxies, timeout=RECV_TIMEOUT, headers=HEADERS)
+            latency = (time.time() - t0) * 1000
+
             if r.status_code == 200:
                 success += 1
+                latencies.append(latency)
+
         except:
-            continue
+            pass
 
-        if success >= 3:
-            return True
+        if success >= CFG.get("min_success", 1):
+            avg_latency = sum(latencies) / len(latencies)
+            return True, avg_latency
 
-    return False
+    return False, None
 
 # ================= XRAY =================
 
 def generate_config(uuid, host, port, params, local_port):
     security = params.get('security', ['none'])[0]
     sni = params.get('sni', [''])[0]
-    pbk = params.get('pbk', [''])[0]
-    sid = params.get('sid', [''])[0]
-    fp = params.get('fp', ['chrome'])[0]
-    flow = params.get('flow', [''])[0]
-    net = params.get('type', ['tcp'])[0]
 
-    stream_settings = {"network": net, "security": security}
+    stream_settings = {"network": "tcp", "security": security}
 
     if security == "reality":
         stream_settings["realitySettings"] = {
             "serverName": sni,
-            "fingerprint": fp,
-            "publicKey": pbk,
-            "shortId": sid,
+            "fingerprint": params.get('fp', ['chrome'])[0],
+            "publicKey": params.get('pbk', [''])[0],
+            "shortId": params.get('sid', [''])[0],
             "spiderX": ""
         }
+
     elif security == "tls":
         stream_settings["tlsSettings"] = {"serverName": sni}
 
@@ -133,8 +156,7 @@ def generate_config(uuid, host, port, params, local_port):
                     "port": int(port),
                     "users": [{
                         "id": uuid,
-                        "encryption": "none",
-                        "flow": flow
+                        "encryption": "none"
                     }]
                 }]
             },
@@ -145,14 +167,21 @@ def generate_config(uuid, host, port, params, local_port):
 # ================= CORE =================
 
 def check_link(link, idx):
-    local_port = 20000 + idx
+    global success_count
+
+    with lock:
+        if success_count >= MAX_SUCCESS:
+            return None
+
+    local_port = 20000 + (idx % 1000)
     temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
     process = None
 
     try:
         parsed = urllib.parse.urlparse(link)
+
         if parsed.scheme != "vless":
-            return False
+            return False, "❌ не VLESS"
 
         uuid = parsed.username
         host = parsed.hostname
@@ -160,19 +189,23 @@ def check_link(link, idx):
         params = urllib.parse.parse_qs(parsed.query)
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
 
-        # ================= SNI FILTER =================
         sni = params.get('sni', [''])[0].lower()
-        if not sni or sni not in WHITELIST_DOMAINS:
-            print(f"[-] SKIP (SNI не в whitelist): {sni} | {remark}")
-            return False
-        # =================================================
 
-        print(f"[*] {remark}")
+        if not sni:
+            return False, "❌ нет SNI"
+
+        if sni not in WHITELIST_DOMAINS:
+            return False, f"🚫 SNI вне whitelist"
+
+        print(f"🔍 {remark}")
 
         config = generate_config(uuid, host, port, params, local_port)
+
         os.makedirs(TEMP_DIR, exist_ok=True)
         with open(temp_config, "w") as f:
             json.dump(config, f)
+
+        start = time.time()
 
         process = subprocess.Popen(
             [XRAY_BIN, "run", "-c", temp_config],
@@ -180,23 +213,35 @@ def check_link(link, idx):
             stderr=subprocess.DEVNULL
         )
 
-        if not wait_socks(local_port):
-            print("[-] Xray не стартовал")
-            return False
+        ok, handshake_ms = wait_socks(local_port)
+
+        if not ok:
+            return False, "❌ Xray не поднялся"
+
+        if handshake_ms > HANDSHAKE_LIMIT:
+            return False, f"⏱ медленный handshake ({int(handshake_ms)} ms)"
 
         proxies = {
             "http": f"socks5h://127.0.0.1:{local_port}",
             "https": f"socks5h://127.0.0.1:{local_port}"
         }
 
-        if test_proxy(proxies):
-            print(f"[+] OK: {remark}")
-            return True
-        else:
-            print(f"[-] FAIL: {remark}")
+        # RETRY LOGIC
+        for attempt in range(PROBE_ATTEMPTS):
+            ok, latency = test_proxy(proxies)
+
+            if ok:
+                if latency and latency > MAX_LATENCY:
+                    return False, f"🐢 высокий latency ({int(latency)} ms)"
+
+                return True, f"⚡ OK ({int(latency)} ms)"
+
+            time.sleep(SLEEP_BETWEEN)
+
+        return False, "❌ нестабильный / не проходит пробы"
 
     except Exception as e:
-        print(f"[-] Ошибка: {e}")
+        return False, f"💥 {str(e)[:60]}"
 
     finally:
         if process:
@@ -206,33 +251,38 @@ def check_link(link, idx):
         if os.path.exists(temp_config):
             os.remove(temp_config)
 
-    return False
-
 # ================= SAVE =================
 
 def save(link):
+    global success_count
+
     with lock:
+        if success_count >= MAX_SUCCESS:
+            return False
+
         os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
+
         with open(RESULTS_FILE, "a") as f:
             f.write(link.strip() + "\n")
-        print("[SAVE OK]")
+
+        success_count += 1
+        print(f"💾 [{success_count}/{MAX_SUCCESS}]")
+
+        return True
 
 # ================= MAIN =================
 
 def fetch_links_from_url(url):
     try:
-        r = session.get(url, timeout=15, headers=HEADERS)
+        r = session.get(url, timeout=15)
         r.raise_for_status()
-        lines = [l.strip() for l in r.text.splitlines() if l.strip()]
-        print(f"[+] Получено {len(lines)} ссылок из {url}")
-        return lines
-    except Exception as e:
-        print(f"[-] Ошибка загрузки подписки {url}: {e}")
+        return [l.strip() for l in r.text.splitlines() if l.strip()]
+    except:
         return []
 
 def main():
     if not os.path.exists(TARGETS_PATH):
-        print("targets.txt не найден")
+        print("❌ нет targets.txt")
         return
 
     open(RESULTS_FILE, "w").close()
@@ -243,19 +293,34 @@ def main():
             l = l.strip()
             if not l:
                 continue
-            if l.startswith("http://") or l.startswith("https://"):
+            if l.startswith("http"):
                 links.extend(fetch_links_from_url(l))
             else:
                 links.append(l)
 
-    print(f"[*] Всего ссылок для проверки: {len(links)}")
+    print(f"🚀 всего: {len(links)}\n")
 
     with ThreadPoolExecutor(MAX_WORKERS) as ex:
         futures = {ex.submit(check_link, link, i): link for i, link in enumerate(links)}
+
         for f in as_completed(futures):
-            link = futures[f]
-            if f.result():
-                save(link)
+            if success_count >= MAX_SUCCESS:
+                print("🛑 лимит достигнут")
+                break
+
+            result = f.result()
+            if result is None:
+                continue
+
+            ok, reason = result
+
+            if ok:
+                print(f"✅ {reason}")
+                save(futures[f])
+            else:
+                print(f"❌ {reason}")
+
+    print(f"\n🎯 готово: {success_count}")
 
 if __name__ == "__main__":
     main()
