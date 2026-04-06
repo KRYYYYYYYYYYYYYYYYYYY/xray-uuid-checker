@@ -72,7 +72,6 @@ WHITELIST_URLS = [
 # Stage A: primary mobile-like check (по умолчанию gstatic, как самый показательный для РФ-кейса)
 STAGE_A_URLS = CFG.get("l7_stage_a_urls") or [
     "https://www.gstatic.com/generate_204",
-    "https://connectivitycheck.gstatic.com/generate_204",
 ]
 STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
 L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
