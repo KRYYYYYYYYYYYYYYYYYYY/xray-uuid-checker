@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
 import urllib3
 
-# ================= LOAD MOBILE CONFIG =================
+# ================= LOAD CONFIG =================
 
 CONFIG_PATH = "config_test.json"
 
@@ -32,16 +32,20 @@ MAX_SUCCESS = CFG.get("l7_max_candidates", 200)
 PROBE_ATTEMPTS = CFG.get("probe_attempts", 3)
 MAX_LATENCY = CFG.get("max_latency_ms", 2000)
 HANDSHAKE_LIMIT = CFG.get("max_handshake_ms", 1200)
-RECV_TIMEOUT = CFG.get("recv_timeout", 1.0)
+RECV_TIMEOUT = CFG.get("recv_timeout", 0.9)
 SLEEP_BETWEEN = CFG.get("between_attempts_sleep", 0.2)
 
 WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
     "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/outside-kvas.lst",
-    "https://raw.githubusercontent.com/itdoginfo/allow-domains/refs/heads/main/Russia/outside-kvas.lst",
-    "https://raw.githubusercontent.com/hxehex/russia-mobile-internet-whitelist/refs/heads/main/whitelist.txt",
     "https://raw.githubusercontent.com/KRYYYYYYYYYYYYYYYYYYY/xray-uuid-checker/refs/heads/main/Wl2.txt",
     
+]
+
+# 👉 НОРМАЛЬНЫЕ L7 TEST URL (НЕ whitelist)
+TEST_URLS = [
+    "https://www.google.com/generate_204",
+    "https://connectivitycheck.gstatic.com/generate_204",
 ]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
@@ -85,7 +89,6 @@ def load_whitelist():
     return domains
 
 WHITELIST_DOMAINS = load_whitelist()
-WHITELIST = [f"https://{d}" for d in WHITELIST_DOMAINS]
 
 # ================= UTILS =================
 
@@ -103,25 +106,18 @@ def wait_socks(port, timeout=5):
     return False, None
 
 def test_proxy(proxies):
-    success = 0
-    latencies = []
-
-    for url in WHITELIST[:10]:
+    # ✅ теперь тестим реальные endpoint'ы, а не whitelist
+    for url in TEST_URLS:
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=RECV_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
 
-            if r.status_code == 200:
-                success += 1
-                latencies.append(latency)
+            if r.status_code in (200, 204):
+                return True, latency
 
         except:
-            pass
-
-        if success >= CFG.get("min_success", 1):
-            avg_latency = sum(latencies) / len(latencies)
-            return True, avg_latency
+            continue
 
     return False, None
 
@@ -201,15 +197,13 @@ def check_link(link, idx):
         if sni not in WHITELIST_DOMAINS:
             return False, f"🚫 SNI вне whitelist"
 
-        print(f"🔍 {remark}")
+        print(f"🔍 [{idx}] {remark}")
 
         config = generate_config(uuid, host, port, params, local_port)
 
         os.makedirs(TEMP_DIR, exist_ok=True)
         with open(temp_config, "w") as f:
             json.dump(config, f)
-
-        start = time.time()
 
         process = subprocess.Popen(
             [XRAY_BIN, "run", "-c", temp_config],
@@ -223,26 +217,25 @@ def check_link(link, idx):
             return False, "❌ Xray не поднялся"
 
         if handshake_ms > HANDSHAKE_LIMIT:
-            return False, f"⏱ медленный handshake ({int(handshake_ms)} ms)"
+            return False, f"⏱ handshake {int(handshake_ms)} ms"
 
         proxies = {
             "http": f"socks5h://127.0.0.1:{local_port}",
             "https": f"socks5h://127.0.0.1:{local_port}"
         }
 
-        # RETRY LOGIC
-        for attempt in range(PROBE_ATTEMPTS):
+        for _ in range(PROBE_ATTEMPTS):
             ok, latency = test_proxy(proxies)
 
             if ok:
                 if latency and latency > MAX_LATENCY:
-                    return False, f"🐢 высокий latency ({int(latency)} ms)"
+                    return False, f"🐢 latency {int(latency)} ms"
 
-                return True, f"⚡ OK ({int(latency)} ms)"
+                return True, f"⚡ {int(latency)} ms"
 
             time.sleep(SLEEP_BETWEEN)
 
-        return False, "❌ нестабильный / не проходит пробы"
+        return False, "❌ не проходит L7"
 
     except Exception as e:
         return False, f"💥 {str(e)[:60]}"
