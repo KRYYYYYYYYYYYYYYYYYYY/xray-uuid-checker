@@ -69,19 +69,36 @@ WHITELIST_URLS = [
     "https://raw.githubusercontent.com/KRYYYYYYYYYYYYYYYYYYY/xray-uuid-checker/refs/heads/main/Wl2.txt",
 ]
 
-# Stage A: primary mobile-like check (по умолчанию gstatic, как самый показательный для РФ-кейса)
-STAGE_A_URLS = CFG.get("l7_stage_a_urls") or [
-    "https://www.gstatic.com/generate_204",
+EXCLUDED_L7_URLS = {
     "https://connectivitycheck.gstatic.com/generate_204",
-]
+}
+
+
+def sanitize_l7_urls(urls):
+    cleaned = []
+    for raw in urls:
+        if not raw:
+            continue
+        u = raw.strip()
+        if not u:
+            continue
+        if u in EXCLUDED_L7_URLS:
+            print(f"⚠️ исключен из L7-проверки: {u}")
+            continue
+        cleaned.append(u)
+    return cleaned
+
+
+# Stage A: primary mobile-like check (по умолчанию gstatic, как самый показательный для РФ-кейса)
+STAGE_A_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_urls") or [
+    "https://www.gstatic.com/generate_204",
+])
 STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
 L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
 
-# Stage B: optional cross-check (по умолчанию выключен, чтобы не было "пропуска через google")
+# Stage B: optional cross-check (по умолчанию выключен, URL нужно задать явно)
 L7_STAGE_B_ENABLED = CFG.get("l7_stage_b_enabled", False)
-STAGE_B_URLS = CFG.get("l7_stage_b_urls") or [
-    "https://www.google.com/generate_204",
-]
+STAGE_B_URLS = sanitize_l7_urls(CFG.get("l7_stage_b_urls") or [])
 STAGE_B_OK_STATUSES = set(CFG.get("l7_stage_b_ok_statuses", [200, 204]))
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
@@ -200,6 +217,9 @@ def test_proxy(proxies):
 
     if not L7_STAGE_B_ENABLED:
         return True, stage_a_best_latency, stage_a_reason
+
+    if not STAGE_B_URLS:
+        return False, stage_a_best_latency, "stageB пустой список URL"
 
     stage_b_reason = "нет ответа stage B"
     for url in STAGE_B_URLS:
