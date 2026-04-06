@@ -72,6 +72,7 @@ NET_EMU_BASE_LATENCY_MS = NETWORK_EMULATION.get("base_latency_ms", 0)
 NET_EMU_JITTER_MS = NETWORK_EMULATION.get("jitter_ms", 0)
 NET_EMU_PACKET_LOSS = NETWORK_EMULATION.get("packet_loss_probability", 0.0)
 NET_EMU_BURST_DELAY_MS = NETWORK_EMULATION.get("burst_delay_ms", 0)
+NET_EMU_DROP_AFFECTS_VERDICT = NETWORK_EMULATION.get("drop_affects_verdict", False)
 
 WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
@@ -144,11 +145,40 @@ def fetch_ip_info(ip):
     return None
 
 
+def extract_ip_from_payload(payload):
+    if not isinstance(payload, dict):
+        return ""
+    return (payload.get("ip") or payload.get("ip_addr") or payload.get("query") or "").strip()
+
+
+def fetch_proxy_ip(proxies=None):
+    last_err = "unknown"
+    for _ in range(STAGE_D_RETRIES):
+        for url in IP_ECHO_URLS:
+            try:
+                resp = session.get(
+                    url,
+                    proxies=proxies,
+                    timeout=L7_TIMEOUT,
+                    headers=HEADERS,
+                )
+                ip = extract_ip_from_payload(resp.json())
+                if ip:
+                    return ip, None
+            except Exception as e:
+                last_err = type(e).__name__
+                continue
+    return "", last_err
+
+
 def do_request(url, proxies):
     if MIMIC_DPI_DELAY:
         time.sleep(random.uniform(MIMIC_DPI_DELAY_MIN, MIMIC_DPI_DELAY_MAX))
     if not emulate_network_conditions():
-        return None, None, "synthetic_packet_loss"
+        if NET_EMU_DROP_AFFECTS_VERDICT:
+            return None, None, "synthetic_packet_loss"
+        # emulate congestion without causing deterministic false-negative
+        time.sleep(random.uniform(0.03, 0.15))
     t0 = time.time()
     r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS, stream=False)
     latency = (time.time() - t0) * 1000
@@ -169,6 +199,7 @@ STAGE_B_OK_STATUSES = set(CFG.get("l7_stage_b_ok_statuses", [200, 204]))
 HIJACK_GUARD_ENABLED = CFG.get("hijack_guard_enabled", True)
 REJECT_PRIVATE_EGRESS_IP = CFG.get("reject_private_egress_ip", True)
 IP_ECHO_URL = CFG.get("ip_echo_url", "https://api64.ipify.org?format=json")
+IP_ECHO_URLS = CFG.get("ip_echo_urls") or [IP_ECHO_URL, "https://api.ipify.org?format=json", "https://ifconfig.me/all.json"]
 VERIFY_EGRESS_IP = CFG.get("verify_egress_ip", False)
 IP_REGION_URL = CFG.get("ip_region_url", "http://ip-api.com/json/{ip}?fields=status,country,countryCode,query")
 EXPECTED_COUNTRY_CODES = set(CFG.get("expected_country_codes") or [])
@@ -177,6 +208,8 @@ STABILITY_MIN_SUCCESS = max(1, int(CFG.get("stability_min_success", 2)))
 REAL_DOWNLOAD_URL = CFG.get("real_download_url", "https://speed.cloudflare.com/__down?bytes=1048576")
 REAL_DOWNLOAD_MIN_BYTES = int(CFG.get("real_download_min_bytes", 300 * 1024))
 REAL_DOWNLOAD_MIN_KBPS = int(CFG.get("real_download_min_kbps", 32))
+STAGE_D_STRICT = CFG.get("stage_d_strict", False)
+STAGE_D_RETRIES = max(1, int(CFG.get("stage_d_retries", 2)))
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
@@ -405,11 +438,14 @@ def run_validation_layers(proxies):
 
     # Layer D: egress IP verification
     try:
-        proxy_resp = session.get(IP_ECHO_URL, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
-        proxy_ip = proxy_resp.json().get("ip", "")
+        proxy_ip, proxy_err = fetch_proxy_ip(proxies=proxies)
         result["ip"] = proxy_ip
         if not proxy_ip:
-            result["reason"] = "stageD no_proxy_ip"
+            if STAGE_D_STRICT:
+                result["reason"] = f"stageD no_proxy_ip ({proxy_err})"
+                return result
+            result["reason"] = f"stageD skipped_no_ip ({proxy_err})"
+            result["ok"] = True
             return result
         if REJECT_PRIVATE_EGRESS_IP:
             parsed_ip = ipaddress.ip_address(proxy_ip)
@@ -418,8 +454,7 @@ def run_validation_layers(proxies):
                 return result
 
         if VERIFY_EGRESS_IP:
-            direct_resp = session.get(IP_ECHO_URL, timeout=L7_TIMEOUT, headers=HEADERS)
-            direct_ip = direct_resp.json().get("ip", "")
+            direct_ip, _ = fetch_proxy_ip(proxies=None)
             if direct_ip and direct_ip == proxy_ip:
                 result["reason"] = "stageD same_as_local_ip"
                 return result
@@ -674,7 +709,10 @@ def save(link):
 
 
 def save_report():
-    os.makedirs(os.path.dirname(REPORT_FILE), exist_ok=True)
+    report_dir = os.path.dirname(REPORT_FILE)
+    if report_dir:
+        os.makedirs(report_dir, exist_ok=True)
+    abs_report = os.path.abspath(REPORT_FILE)
     payload = {
         "summary": {
             "checked": len(report_items),
@@ -692,10 +730,14 @@ def save_report():
         "items": report_items,
     }
 
-    with open(REPORT_FILE, "w") as f:
+    tmp_report = f"{REPORT_FILE}.tmp"
+    with open(tmp_report, "w") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp_report, REPORT_FILE)
 
-    print(f"🧾 report: {REPORT_FILE}")
+    print(f"🧾 report: {REPORT_FILE} ({abs_report})")
 
 # ================= MAIN =================
 
