@@ -56,6 +56,8 @@ if "max_success" not in CFG and "max_valid_links" not in CFG:
         )
 
 PROBE_ATTEMPTS = CFG.get("probe_attempts", 3)
+PROBE_MIN_SUCCESS = max(1, int(CFG.get("min_success", CFG.get("l7_min_success", 1))))
+PROBE_MIN_SUCCESS = min(PROBE_MIN_SUCCESS, PROBE_ATTEMPTS)
 MAX_LATENCY = CFG.get("max_latency_ms", 2000)
 HANDSHAKE_LIMIT = CFG.get("max_handshake_ms", 1200)
 RECV_TIMEOUT = CFG.get("recv_timeout", 0.9)
@@ -113,6 +115,8 @@ STAGE_B_OK_STATUSES = set(CFG.get("l7_stage_b_ok_statuses", [200, 204]))
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
 STRICT_SNI_WHITELIST = CFG.get("mobile_whitelist_strict", True)
+L7_ENFORCE_FINAL_URL_HOST = CFG.get("l7_enforce_final_url_host", True)
+L7_ENFORCE_FINAL_URL_PATH = CFG.get("l7_enforce_final_url_path", False)
 
 # ================= GLOBAL =================
 
@@ -231,7 +235,26 @@ def classify_result(ok, reason):
         return "xray_runtime_error"
     if "не проходит l7" in r or "timeout" in r or "proxyerror" in r:
         return "provider_block_suspected"
+    if "host_mismatch" in r or "path_mismatch" in r:
+        return "provider_block_suspected"
     return "unknown"
+
+
+def check_final_url_integrity(expected_url, final_url):
+    try:
+        expected = urllib.parse.urlparse(expected_url)
+        actual = urllib.parse.urlparse(final_url)
+    except Exception:
+        return False, "url_parse_error"
+
+    if L7_ENFORCE_FINAL_URL_HOST and expected.hostname and actual.hostname:
+        if expected.hostname.lower() != actual.hostname.lower():
+            return False, f"host_mismatch expected={expected.hostname} got={actual.hostname}"
+
+    if L7_ENFORCE_FINAL_URL_PATH and expected.path != actual.path:
+        return False, f"path_mismatch expected={expected.path or '/'} got={actual.path or '/'}"
+
+    return True, "ok"
 
 
 def test_proxy(proxies):
@@ -253,6 +276,12 @@ def test_proxy(proxies):
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
+            integrity_ok, integrity_reason = check_final_url_integrity(url, r.url)
+            if not integrity_ok:
+                stage_a_reason = f"stageA {integrity_reason} {url}"
+                if L7_REQUIRE_STAGE_A_ALL:
+                    return False, None, stage_a_reason
+                continue
 
             if r.status_code in STAGE_A_OK_STATUSES:
                 stage_a_ok_count += 1
@@ -293,6 +322,10 @@ def test_proxy(proxies):
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
+            integrity_ok, integrity_reason = check_final_url_integrity(url, r.url)
+            if not integrity_ok:
+                stage_b_reason = f"stageB {integrity_reason} {url}"
+                continue
 
             if r.status_code in STAGE_B_OK_STATUSES:
                 return True, latency, f"stageB {r.status_code} {url}"
@@ -456,24 +489,38 @@ def check_link(link, idx):
             "https": f"socks5h://127.0.0.1:{local_port}"
         }
 
+        ok_count = 0
+        latencies = []
+        last_l7_reason = "нет ответа"
         for _ in range(PROBE_ATTEMPTS):
             ok, latency, l7_reason = test_proxy(proxies)
+            last_l7_reason = l7_reason
 
             if ok:
-                if latency and latency > MAX_LATENCY:
-                    metadata["reason"] = f"🐢 latency {int(latency)} ms"
-                    metadata["classification"] = classify_result(False, metadata["reason"])
-                    return False, metadata["reason"], metadata
+                if latency:
+                    latencies.append(latency)
+                ok_count += 1
+                if ok_count >= PROBE_MIN_SUCCESS:
+                    best_latency = min(latencies) if latencies else latency
+                    if best_latency and best_latency > MAX_LATENCY:
+                        metadata["reason"] = f"🐢 latency {int(best_latency)} ms"
+                        metadata["classification"] = classify_result(False, metadata["reason"])
+                        return False, metadata["reason"], metadata
 
-                metadata["status"] = "ok"
-                metadata["latency_ms"] = int(latency) if latency else None
-                metadata["reason"] = f"⚡ {int(latency)} ms ({l7_reason})"
-                metadata["classification"] = classify_result(True, metadata["reason"])
-                return True, metadata["reason"], metadata
+                    metadata["status"] = "ok"
+                    metadata["latency_ms"] = int(best_latency) if best_latency else None
+                    metadata["reason"] = (
+                        f"⚡ {int(best_latency)} ms "
+                        f"({ok_count}/{PROBE_ATTEMPTS} success, {l7_reason})"
+                    )
+                    metadata["classification"] = classify_result(True, metadata["reason"])
+                    return True, metadata["reason"], metadata
 
             time.sleep(SLEEP_BETWEEN)
 
-        metadata["reason"] = f"❌ не проходит L7 ({l7_reason})"
+        metadata["reason"] = (
+            f"❌ не проходит L7 ({ok_count}/{PROBE_ATTEMPTS} success, {last_l7_reason})"
+        )
         metadata["classification"] = classify_result(False, metadata["reason"])
         return False, metadata["reason"], metadata
 
@@ -581,6 +628,7 @@ def main():
         "🧪 L7 profile: "
         f"stage_a_all={L7_REQUIRE_STAGE_A_ALL}, "
         f"stage_b_enabled={L7_STAGE_B_ENABLED}, "
+        f"min_success={PROBE_MIN_SUCCESS}/{PROBE_ATTEMPTS}, "
         f"mimic_dpi_delay={MIMIC_DPI_DELAY}, "
         f"network_emu={NET_EMU_ENABLED}\n"
     )
