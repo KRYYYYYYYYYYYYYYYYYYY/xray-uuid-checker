@@ -7,6 +7,7 @@ import urllib.parse
 import random
 import ipaddress
 import uuid as uuidlib
+from datetime import datetime, timezone
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
@@ -58,6 +59,7 @@ TEMP_DIR = resolve_repo_path(CFG.get("temp_dir", "temp_configs"))
 MAX_WORKERS = CFG.get("workers", 20)
 LEGACY_L7_MAX_CANDIDATES = CFG.get("l7_max_candidates")
 MAX_SUCCESS = CFG.get("max_success", CFG.get("max_valid_links", 200))
+MAX_SUCCESS_PER_EGRESS_IP = max(0, int(CFG.get("max_success_per_egress_ip", 1)))
 
 if "max_success" not in CFG and "max_valid_links" not in CFG:
     if isinstance(LEGACY_L7_MAX_CANDIDATES, int) and LEGACY_L7_MAX_CANDIDATES > 2:
@@ -310,6 +312,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 success_count = 0
 fail_reasons = Counter()
 report_items = []
+success_ip_counter = Counter()
 
 # ================= WHITELIST =================
 
@@ -845,14 +848,34 @@ def save(link):
         return True
 
 
+def reserve_success_ip(ip_value):
+    if MAX_SUCCESS_PER_EGRESS_IP <= 0:
+        return True
+    ip = (ip_value or "").strip()
+    if not ip or ip == "unknown":
+        return True
+    with lock:
+        if success_ip_counter[ip] >= MAX_SUCCESS_PER_EGRESS_IP:
+            return False
+        success_ip_counter[ip] += 1
+    return True
+
+
 def save_report():
     ensure_parent_dir(REPORT_FILE)
     payload = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "paths": {
+            "targets_file": TARGETS_PATH,
+            "results_file": RESULTS_FILE,
+            "report_file": REPORT_FILE,
+        },
         "summary": {
             "checked": len(report_items),
             "ok": sum(1 for i in report_items if i.get("status") == "WORKING"),
             "provider_block_suspected": sum(1 for i in report_items if i.get("classification") == "provider_block_suspected"),
             "bad_uuid_or_link": sum(1 for i in report_items if i.get("classification") == "bad_uuid_or_link"),
+            "duplicate_egress_ip": sum(1 for i in report_items if i.get("classification") == "duplicate_egress_ip"),
         },
         "network_emulation": {
             "enabled": NET_EMU_ENABLED,
@@ -948,6 +971,13 @@ def main():
                 continue
 
             ok, reason, metadata = result
+            if ok and not reserve_success_ip(metadata.get("ip", "")):
+                ok = False
+                reason = f"❌ duplicate_egress_ip limit={MAX_SUCCESS_PER_EGRESS_IP} ip={metadata.get('ip', '')}"
+                metadata["status"] = "DEAD"
+                metadata["reason"] = reason
+                metadata["classification"] = "duplicate_egress_ip"
+
             report_items.append(metadata)
 
             if ok:
