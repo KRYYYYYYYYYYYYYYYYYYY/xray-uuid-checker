@@ -12,7 +12,7 @@
   "ws_probe_attempts": 3,
   "ws_timeout": 2.0,
   "l7_max_candidates": 2,
-  "l7_require_stage_a_all": false,
+  "l7_require_stage_a_all": true,
   "l7_stage_b_enabled": true,
   "l7_stage_a_urls": [
     "https://www.gstatic.com/generate_204",
@@ -34,13 +34,13 @@
   ],
   "ip_region_url": "http://ip-api.com/json/{ip}?fields=status,country,countryCode,query",
   "expected_country_codes": [],
+  "stage_d_fail_open": true,
+  "stage_d_retries": 3,
   "stability_attempts": 3,
   "stability_min_success": 2,
   "real_download_url": "https://speed.cloudflare.com/__down?bytes=1048576",
   "real_download_min_bytes": 307200,
   "real_download_min_kbps": 32,
-  "stage_d_strict": false,
-  "stage_d_retries": 3,
   "mimic_dpi_delay_min_sec": 0.08,
   "mimic_dpi_delay_max_sec": 0.22,
   "workers": 16,
@@ -50,7 +50,7 @@
   "max_latency_ms": 3000,
   "recv_timeout": 0.9,
   "between_attempts_sleep": 0.4,
-  "l7_timeout_sec": 4.0,
+  "l7_timeout_sec": 6.0,
   "mobile_whitelist_enabled": true,
   "mobile_whitelist_fail_open": false,
   "mobile_whitelist_timeout_sec": 10,
@@ -88,8 +88,7 @@
     "enabled": true,
     "base_latency_ms": 40,
     "jitter_ms": 25,
-    "packet_loss_probability": 0.01,
-    "burst_delay_ms": 120,
-    "drop_affects_verdict": false
+    "packet_loss_probability": 0.0,
+    "burst_delay_ms": 120
   }
 }

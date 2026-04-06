@@ -145,44 +145,39 @@ def fetch_ip_info(ip):
     return None
 
 
-def extract_ip_from_payload(payload):
-    if not isinstance(payload, dict):
-        return ""
-    return (payload.get("ip") or payload.get("ip_addr") or payload.get("query") or "").strip()
-
-
-def fetch_proxy_ip(proxies=None):
-    last_err = "unknown"
-    for _ in range(STAGE_D_RETRIES):
-        for url in IP_ECHO_URLS:
-            try:
-                resp = session.get(
-                    url,
-                    proxies=proxies,
-                    timeout=L7_TIMEOUT,
-                    headers=HEADERS,
-                )
-                ip = extract_ip_from_payload(resp.json())
-                if ip:
-                    return ip, None
-            except Exception as e:
-                last_err = type(e).__name__
-                continue
-    return "", last_err
-
-
 def do_request(url, proxies):
     if MIMIC_DPI_DELAY:
         time.sleep(random.uniform(MIMIC_DPI_DELAY_MIN, MIMIC_DPI_DELAY_MAX))
     if not emulate_network_conditions():
-        if NET_EMU_DROP_AFFECTS_VERDICT:
-            return None, None, "synthetic_packet_loss"
-        # emulate congestion without causing deterministic false-negative
-        time.sleep(random.uniform(0.03, 0.15))
+        # Для реалистичного режима добавляем "потерю" только как задержку,
+        # но не считаем это фатальной ошибкой валидации.
+        time.sleep(random.uniform(0.05, 0.2))
     t0 = time.time()
     r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS, stream=False)
     latency = (time.time() - t0) * 1000
     return r, latency, None
+
+
+def get_echo_ip(proxies=None):
+    for _ in range(STAGE_D_RETRIES):
+        for url in IP_ECHO_URLS:
+            try:
+                r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
+                data = r.json()
+                ip = data.get("ip") or data.get("ip_addr") or data.get("ip_address")
+                if not ip and "addr" in data:
+                    ip = data.get("addr")
+                if ip:
+                    return str(ip).strip()
+            except Exception:
+                continue
+    return ""
+
+
+def ensure_parent_dir(path):
+    directory = os.path.dirname(path)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
 
 
 # Stage A: primary mobile-like check (по умолчанию gstatic, как самый показательный для РФ-кейса)
@@ -208,7 +203,7 @@ STABILITY_MIN_SUCCESS = max(1, int(CFG.get("stability_min_success", 2)))
 REAL_DOWNLOAD_URL = CFG.get("real_download_url", "https://speed.cloudflare.com/__down?bytes=1048576")
 REAL_DOWNLOAD_MIN_BYTES = int(CFG.get("real_download_min_bytes", 300 * 1024))
 REAL_DOWNLOAD_MIN_KBPS = int(CFG.get("real_download_min_kbps", 32))
-STAGE_D_STRICT = CFG.get("stage_d_strict", False)
+STAGE_D_FAIL_OPEN = CFG.get("stage_d_fail_open", True)
 STAGE_D_RETRIES = max(1, int(CFG.get("stage_d_retries", 2)))
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
@@ -438,36 +433,37 @@ def run_validation_layers(proxies):
 
     # Layer D: egress IP verification
     try:
-        proxy_ip, proxy_err = fetch_proxy_ip(proxies=proxies)
+        proxy_ip = get_echo_ip(proxies=proxies)
         result["ip"] = proxy_ip
         if not proxy_ip:
-            if STAGE_D_STRICT:
-                result["reason"] = f"stageD no_proxy_ip ({proxy_err})"
+            if STAGE_D_FAIL_OPEN:
+                result["ip"] = "unknown"
+            else:
+                result["reason"] = "stageD no_proxy_ip"
                 return result
-            result["reason"] = f"stageD skipped_no_ip ({proxy_err})"
-            result["ok"] = True
-            return result
         if REJECT_PRIVATE_EGRESS_IP:
-            parsed_ip = ipaddress.ip_address(proxy_ip)
-            if parsed_ip.is_private or parsed_ip.is_loopback:
+            parsed_ip = ipaddress.ip_address(proxy_ip) if proxy_ip and proxy_ip != "unknown" else None
+            if parsed_ip and (parsed_ip.is_private or parsed_ip.is_loopback):
                 result["reason"] = "stageD private_or_loopback_ip"
                 return result
 
-        if VERIFY_EGRESS_IP:
-            direct_ip, _ = fetch_proxy_ip(proxies=None)
+        if VERIFY_EGRESS_IP and proxy_ip and proxy_ip != "unknown":
+            direct_ip = get_echo_ip(proxies=None)
             if direct_ip and direct_ip == proxy_ip:
                 result["reason"] = "stageD same_as_local_ip"
                 return result
 
-        if EXPECTED_COUNTRY_CODES:
+        if EXPECTED_COUNTRY_CODES and proxy_ip and proxy_ip != "unknown":
             info = fetch_ip_info(proxy_ip)
             cc = (info or {}).get("countryCode", "")
             if cc and cc not in EXPECTED_COUNTRY_CODES:
                 result["reason"] = f"stageD wrong_country={cc}"
                 return result
     except Exception as e:
-        result["reason"] = f"stageD {type(e).__name__}"
-        return result
+        if not STAGE_D_FAIL_OPEN:
+            result["reason"] = f"stageD {type(e).__name__}"
+            return result
+        result["ip"] = result["ip"] or "unknown"
 
     result["ok"] = True
     result["reason"] = "all_layers_passed"
@@ -697,7 +693,7 @@ def save(link):
         if success_count >= MAX_SUCCESS:
             return False
 
-        os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
+        ensure_parent_dir(RESULTS_FILE)
 
         with open(RESULTS_FILE, "a") as f:
             f.write(link.strip() + "\n")
@@ -709,10 +705,7 @@ def save(link):
 
 
 def save_report():
-    report_dir = os.path.dirname(REPORT_FILE)
-    if report_dir:
-        os.makedirs(report_dir, exist_ok=True)
-    abs_report = os.path.abspath(REPORT_FILE)
+    ensure_parent_dir(REPORT_FILE)
     payload = {
         "summary": {
             "checked": len(report_items),
@@ -730,8 +723,7 @@ def save_report():
         "items": report_items,
     }
 
-    tmp_report = f"{REPORT_FILE}.tmp"
-    with open(tmp_report, "w") as f:
+    with open(REPORT_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
         f.flush()
         os.fsync(f.fileno())
