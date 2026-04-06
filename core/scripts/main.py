@@ -5,6 +5,7 @@ import socket
 import subprocess
 import urllib.parse
 import random
+import ipaddress
 import uuid as uuidlib
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -98,6 +99,16 @@ def sanitize_l7_urls(urls):
     return cleaned
 
 
+def maybe_multi_unquote(value, max_rounds=3):
+    current = value or ""
+    for _ in range(max_rounds):
+        decoded = urllib.parse.unquote(current)
+        if decoded == current:
+            break
+        current = decoded
+    return current
+
+
 # Stage A: primary mobile-like check (по умолчанию gstatic, как самый показательный для РФ-кейса)
 STAGE_A_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_urls") or [
     "https://www.gstatic.com/generate_204",
@@ -109,6 +120,10 @@ L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
 L7_STAGE_B_ENABLED = CFG.get("l7_stage_b_enabled", False)
 STAGE_B_URLS = sanitize_l7_urls(CFG.get("l7_stage_b_urls") or [])
 STAGE_B_OK_STATUSES = set(CFG.get("l7_stage_b_ok_statuses", [200, 204]))
+HIJACK_GUARD_ENABLED = CFG.get("hijack_guard_enabled", True)
+REJECT_PRIVATE_EGRESS_IP = CFG.get("reject_private_egress_ip", True)
+IP_ECHO_URL = CFG.get("ip_echo_url", "https://api64.ipify.org?format=json")
+VERIFY_EGRESS_IP = CFG.get("verify_egress_ip", False)
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
@@ -255,6 +270,14 @@ def test_proxy(proxies):
             latency = (time.time() - t0) * 1000
 
             if r.status_code in STAGE_A_OK_STATUSES:
+                if HIJACK_GUARD_ENABLED:
+                    expected_host = urllib.parse.urlparse(url).hostname or ""
+                    final_host = urllib.parse.urlparse(r.url).hostname or ""
+                    if expected_host and final_host and expected_host != final_host:
+                        stage_a_reason = f"stageA hijack {expected_host}->{final_host}"
+                        if L7_REQUIRE_STAGE_A_ALL:
+                            return False, None, stage_a_reason
+                        continue
                 stage_a_ok_count += 1
                 stage_a_latencies.append(latency)
                 stage_a_reason = f"stageA {r.status_code} {url}"
@@ -322,9 +345,19 @@ def generate_config(uuid, host, port, params, local_port):
             "shortId": get_param(params, "sid", ""),
             "spiderX": ""
         }
+        alpn = maybe_multi_unquote(get_param(params, "alpn", ""))
+        if alpn:
+            alpns = [p.strip() for p in alpn.split(",") if p.strip()]
+            if alpns:
+                stream_settings["realitySettings"]["alpn"] = alpns
 
     elif security == "tls":
         stream_settings["tlsSettings"] = {"serverName": sni}
+        alpn = maybe_multi_unquote(get_param(params, "alpn", ""))
+        if alpn:
+            alpns = [p.strip() for p in alpn.split(",") if p.strip()]
+            if alpns:
+                stream_settings["tlsSettings"]["alpn"] = alpns
 
     if net == "ws":
         stream_settings["wsSettings"] = {
@@ -411,6 +444,13 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
+        alpn_raw = get_param(params, "alpn", "")
+        alpn_decoded = maybe_multi_unquote(alpn_raw)
+        if "%2" in alpn_decoded.lower():
+            metadata["reason"] = "❌ битый ALPN (многократное кодирование)"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
+
         sni = get_param(params, "sni", "").lower()
 
         if not sni:
@@ -455,6 +495,31 @@ def check_link(link, idx):
             "http": f"socks5h://127.0.0.1:{local_port}",
             "https": f"socks5h://127.0.0.1:{local_port}"
         }
+
+        if VERIFY_EGRESS_IP:
+            try:
+                direct_resp = session.get(IP_ECHO_URL, timeout=L7_TIMEOUT, headers=HEADERS)
+                proxy_resp = session.get(IP_ECHO_URL, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
+                direct_ip = direct_resp.json().get("ip", "")
+                proxy_ip = proxy_resp.json().get("ip", "")
+                if not proxy_ip:
+                    metadata["reason"] = "❌ egress IP пустой"
+                    metadata["classification"] = classify_result(False, metadata["reason"])
+                    return False, metadata["reason"], metadata
+                if REJECT_PRIVATE_EGRESS_IP:
+                    parsed_ip = ipaddress.ip_address(proxy_ip)
+                    if parsed_ip.is_private or parsed_ip.is_loopback:
+                        metadata["reason"] = "❌ egress IP приватный/loopback"
+                        metadata["classification"] = classify_result(False, metadata["reason"])
+                        return False, metadata["reason"], metadata
+                if direct_ip and proxy_ip == direct_ip:
+                    metadata["reason"] = "❌ egress IP совпадает с локальным"
+                    metadata["classification"] = classify_result(False, metadata["reason"])
+                    return False, metadata["reason"], metadata
+            except Exception as e:
+                metadata["reason"] = f"❌ egress IP check error ({type(e).__name__})"
+                metadata["classification"] = classify_result(False, metadata["reason"])
+                return False, metadata["reason"], metadata
 
         for _ in range(PROBE_ATTEMPTS):
             ok, latency, l7_reason = test_proxy(proxies)
