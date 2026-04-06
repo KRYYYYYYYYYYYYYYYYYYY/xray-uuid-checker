@@ -1,1 +1,1 @@
-https://raw.githubusercontent.com/makitaltdriddim-web/vpn-configs-for-russia-/refs/heads/main/WHITE-CIDR-RU-checked.txt
+https://raw.githubusercontent.com/makitaltdriddim-web/vpn-configs-for-russia-/refs/heads/main/WHITE-CIDR-RU-all.txt
