@@ -7,6 +7,7 @@ import urllib.parse
 import random
 import ipaddress
 import uuid as uuidlib
+from datetime import datetime, timezone
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
@@ -15,10 +16,23 @@ import urllib3
 
 # ================= LOAD CONFIG =================
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
+
 CONFIG_PATH_CANDIDATES = (
     "config_test.json",
     os.path.join("client", "config_test.json"),
+    os.path.join(REPO_ROOT, "config_test.json"),
+    os.path.join(REPO_ROOT, "client", "config_test.json"),
 )
+
+
+def resolve_repo_path(path_value):
+    if not path_value:
+        return path_value
+    if os.path.isabs(path_value):
+        return path_value
+    return os.path.join(REPO_ROOT, path_value)
 
 
 def load_runtime_config():
@@ -26,7 +40,7 @@ def load_runtime_config():
         if os.path.exists(path):
             with open(path) as f:
                 cfg = json.load(f)
-            print(f"📦 config: {path}")
+            print(f"📦 config: {os.path.abspath(path)}")
             return cfg
     print("⚠️ config_test.json не найден, используются значения по умолчанию")
     return {}
@@ -36,15 +50,16 @@ CFG = load_runtime_config()
 
 # ================= CONFIG =================
 
-TARGETS_PATH = "targets.txt"
-RESULTS_FILE = "results/valid.txt"
-REPORT_FILE = CFG.get("report_file", "results/report.json")
+TARGETS_PATH = resolve_repo_path(CFG.get("targets_file", "targets.txt"))
+RESULTS_FILE = resolve_repo_path(CFG.get("results_file", "results/valid.txt"))
+REPORT_FILE = resolve_repo_path(CFG.get("report_file", "results/report.json"))
 XRAY_BIN = CFG.get("xray_bin", "/usr/local/bin/xray")
-TEMP_DIR = "temp_configs"
+TEMP_DIR = resolve_repo_path(CFG.get("temp_dir", "temp_configs"))
 
 MAX_WORKERS = CFG.get("workers", 20)
 LEGACY_L7_MAX_CANDIDATES = CFG.get("l7_max_candidates")
 MAX_SUCCESS = CFG.get("max_success", CFG.get("max_valid_links", 200))
+MAX_SUCCESS_PER_EGRESS_IP = max(0, int(CFG.get("max_success_per_egress_ip", 1)))
 
 if "max_success" not in CFG and "max_valid_links" not in CFG:
     if isinstance(LEGACY_L7_MAX_CANDIDATES, int) and LEGACY_L7_MAX_CANDIDATES > 2:
@@ -99,6 +114,34 @@ def sanitize_l7_urls(urls):
     return cleaned
 
 
+def build_stage_b_targets(raw_targets):
+    targets = []
+    for item in (raw_targets or []):
+        if isinstance(item, str):
+            url = item.strip()
+            if not url:
+                continue
+            targets.append({
+                "url": url,
+                "ok_statuses": [200],
+                "expect_contains": [],
+                "expect_json_key": "",
+            })
+            continue
+        if not isinstance(item, dict):
+            continue
+        url = str(item.get("url", "")).strip()
+        if not url:
+            continue
+        targets.append({
+            "url": url,
+            "ok_statuses": item.get("ok_statuses", [200]),
+            "expect_contains": item.get("expect_contains", []),
+            "expect_json_key": item.get("expect_json_key", ""),
+        })
+    return targets
+
+
 def maybe_multi_unquote(value, max_rounds=3):
     current = value or ""
     for _ in range(max_rounds):
@@ -110,24 +153,42 @@ def maybe_multi_unquote(value, max_rounds=3):
 
 
 def parse_alpn_list(params):
-    raw = maybe_multi_unquote(get_param(params, "alpn", ""))
-    if not raw:
-        return []
-    allowed = {"h2", "http/1.1"}
+    raw_value = get_param(params, "alpn", "")
+    decoded = maybe_multi_unquote(raw_value)
+    if not decoded:
+        return [], False
+
+    # В реальных ссылках встречаются сломанные разделители и многократное кодирование.
+    normalized = (
+        decoded.replace(";", ",")
+        .replace("|", ",")
+        .replace(" ", ",")
+        .strip(",")
+    )
+    allowed = {"h2", "http/1.1", "h3"}
     parsed = []
-    for part in raw.split(","):
+    malformed = False
+    for part in normalized.split(","):
         token = part.strip().lower()
         if not token:
             continue
         if token in allowed:
             parsed.append(token)
+        else:
+            malformed = True
+
+    # Если после нескольких раундов декодирования осталось %-кодирование,
+    # считаем это признаком "битого" ALPN, но пытаемся восстановить корректные токены.
+    if "%" in decoded or "%" in raw_value:
+        malformed = True
+
     deduped = []
     seen = set()
     for p in parsed:
         if p not in seen:
             seen.add(p)
             deduped.append(p)
-    return deduped
+    return deduped, malformed
 
 
 def fetch_ip_info(ip):
@@ -173,6 +234,16 @@ def get_echo_ip(proxies=None):
     return ""
 
 
+LOCAL_EGRESS_IP_CACHE = None
+
+
+def get_local_egress_ip():
+    global LOCAL_EGRESS_IP_CACHE
+    if LOCAL_EGRESS_IP_CACHE is None:
+        LOCAL_EGRESS_IP_CACHE = get_echo_ip(proxies=None)
+    return LOCAL_EGRESS_IP_CACHE
+
+
 def ensure_parent_dir(path):
     directory = os.path.dirname(path)
     if directory:
@@ -183,18 +254,40 @@ def ensure_parent_dir(path):
 STAGE_A_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_urls") or [
     "https://www.gstatic.com/generate_204",
 ])
+STAGE_A_FALLBACK_ENABLED = CFG.get("l7_stage_a_fallback_enabled", True)
+STAGE_A_FALLBACK_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_fallback_urls") or [
+    "https://www.msftconnecttest.com/connecttest.txt",
+    "https://cp.cloudflare.com/generate_204",
+])
 STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
 L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
 
-# Stage B: optional cross-check (по умолчанию выключен, URL нужно задать явно)
-L7_STAGE_B_ENABLED = CFG.get("l7_stage_b_enabled", False)
+# Stage B: anti-fallback cross-check (по умолчанию включен)
+L7_STAGE_B_ENABLED = CFG.get("l7_stage_b_enabled", True)
+_raw_stage_b_targets = CFG.get("l7_stage_b_targets") or [
+    {
+        "url": "https://api.ipify.org?format=json",
+        "ok_statuses": [200],
+        "expect_json_key": "ip",
+    },
+    {
+        "url": "https://www.cloudflare.com/cdn-cgi/trace",
+        "ok_statuses": [200],
+        "expect_contains": ["h=", "ip=", "ts="],
+    },
+]
+STAGE_B_TARGETS = build_stage_b_targets(_raw_stage_b_targets)
+# legacy compatibility
 STAGE_B_URLS = sanitize_l7_urls(CFG.get("l7_stage_b_urls") or [])
+if STAGE_B_URLS:
+    STAGE_B_TARGETS.extend(build_stage_b_targets(STAGE_B_URLS))
 STAGE_B_OK_STATUSES = set(CFG.get("l7_stage_b_ok_statuses", [200, 204]))
 HIJACK_GUARD_ENABLED = CFG.get("hijack_guard_enabled", True)
 REJECT_PRIVATE_EGRESS_IP = CFG.get("reject_private_egress_ip", True)
 IP_ECHO_URL = CFG.get("ip_echo_url", "https://api64.ipify.org?format=json")
 IP_ECHO_URLS = CFG.get("ip_echo_urls") or [IP_ECHO_URL, "https://api.ipify.org?format=json", "https://ifconfig.me/all.json"]
-VERIFY_EGRESS_IP = CFG.get("verify_egress_ip", False)
+VERIFY_EGRESS_IP = CFG.get("verify_egress_ip", True)
+VERIFY_IP_NOT_LOCAL = CFG.get("verify_ip_not_local", True)
 IP_REGION_URL = CFG.get("ip_region_url", "http://ip-api.com/json/{ip}?fields=status,country,countryCode,query")
 EXPECTED_COUNTRY_CODES = set(CFG.get("expected_country_codes") or [])
 STABILITY_ATTEMPTS = max(1, int(CFG.get("stability_attempts", 3)))
@@ -202,8 +295,32 @@ STABILITY_MIN_SUCCESS = max(1, int(CFG.get("stability_min_success", 2)))
 REAL_DOWNLOAD_URL = CFG.get("real_download_url", "https://speed.cloudflare.com/__down?bytes=1048576")
 REAL_DOWNLOAD_MIN_BYTES = int(CFG.get("real_download_min_bytes", 300 * 1024))
 REAL_DOWNLOAD_MIN_KBPS = int(CFG.get("real_download_min_kbps", 32))
-STAGE_D_FAIL_OPEN = CFG.get("stage_d_fail_open", True)
+STAGE_D_FAIL_OPEN = CFG.get("stage_d_fail_open", False)
 STAGE_D_RETRIES = max(1, int(CFG.get("stage_d_retries", 2)))
+REAL_WORLD_CHECK_ENABLED = CFG.get("real_world_check_enabled", True)
+REAL_WORLD_TARGETS = build_stage_b_targets(CFG.get("real_world_targets") or [
+    {
+        "url": "https://www.wikipedia.org/",
+        "ok_statuses": [200],
+        "expect_contains": ["wikipedia"],
+    },
+    {
+        "url": "https://api.ipify.org?format=json",
+        "ok_statuses": [200],
+        "expect_json_key": "ip",
+    },
+    {
+        "url": "https://www.cloudflare.com/cdn-cgi/trace",
+        "ok_statuses": [200],
+        "expect_contains": ["h=", "ip=", "ts="],
+    },
+])
+REAL_WORLD_MIN_SUCCESS = max(1, int(CFG.get("real_world_min_success", 2)))
+NONCE_PROBE_ENABLED = CFG.get("nonce_probe_enabled", True)
+NONCE_PROBE_URLS = CFG.get("nonce_probe_urls") or [
+    "https://httpbin.org/anything/{nonce}?r={nonce}",
+    "https://postman-echo.com/get?nonce={nonce}",
+]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
@@ -219,6 +336,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 success_count = 0
 fail_reasons = Counter()
 report_items = []
+success_ip_counter = Counter()
 
 # ================= WHITELIST =================
 
@@ -288,10 +406,23 @@ def get_param(params, key, default=""):
 
 def is_valid_uuid(value):
     try:
-        parsed = uuidlib.UUID(str(value))
-        return str(parsed) == str(value).lower()
+        uuidlib.UUID(str(value).strip())
+        return True
     except ValueError:
         return False
+
+
+def normalize_uuid(value):
+    if value is None:
+        return ""
+    candidate = maybe_multi_unquote(str(value)).strip()
+    if not candidate:
+        return ""
+    candidate = candidate.strip("{}")
+    try:
+        return str(uuidlib.UUID(candidate))
+    except ValueError:
+        return ""
 
 
 def emulate_network_conditions():
@@ -327,6 +458,64 @@ def classify_result(ok, reason):
     if "не проходит l7" in r or "timeout" in r or "proxyerror" in r or "stage" in r or "unstable" in r:
         return "provider_block_suspected"
     return "unknown"
+
+
+def check_target_via_proxy(target, proxies):
+    url = target["url"]
+    r, _, err = do_request(url, proxies)
+    if err:
+        return False, "request_error"
+    expected_host = urllib.parse.urlparse(url).hostname or ""
+    final_host = urllib.parse.urlparse(r.url).hostname or ""
+    body = (r.text or "")[:512].lower()
+    allowed_statuses = set(target.get("ok_statuses") or [200])
+    if r.status_code not in allowed_statuses:
+        return False, f"bad_status={r.status_code}"
+    if expected_host and final_host and expected_host != final_host:
+        return False, f"host_mismatch={expected_host}->{final_host}"
+    if expected_host and expected_host not in (final_host + body):
+        return False, "host_not_in_body"
+    expect_contains = [str(x).lower() for x in target.get("expect_contains", []) if str(x).strip()]
+    if expect_contains and not all(marker in body for marker in expect_contains):
+        return False, "missing_markers"
+    expect_json_key = str(target.get("expect_json_key", "")).strip()
+    if expect_json_key:
+        try:
+            data = r.json()
+        except Exception:
+            return False, "bad_json"
+        if expect_json_key not in data:
+            return False, f"missing_json_key={expect_json_key}"
+    return True, "ok"
+
+
+def nonce_probe_check(proxies):
+    nonce = uuidlib.uuid4().hex[:12]
+    for template in NONCE_PROBE_URLS:
+        try:
+            url = template.format(nonce=nonce)
+            r, _, err = do_request(url, proxies)
+            if err:
+                continue
+            if r.status_code != 200:
+                continue
+            final_host = urllib.parse.urlparse(r.url).hostname or ""
+            expected_host = urllib.parse.urlparse(url).hostname or ""
+            if expected_host and final_host and expected_host != final_host:
+                continue
+            payload = r.text or ""
+            if nonce in payload:
+                return True, f"nonce_ok host={final_host or expected_host}"
+            try:
+                data = r.json()
+            except Exception:
+                continue
+            serialized = json.dumps(data, ensure_ascii=False)
+            if nonce in serialized:
+                return True, f"nonce_ok_json host={final_host or expected_host}"
+        except Exception:
+            continue
+    return False, "nonce_probe_failed"
 
 
 def run_validation_layers(proxies):
@@ -365,38 +554,71 @@ def run_validation_layers(proxies):
             if L7_REQUIRE_STAGE_A_ALL:
                 return result
 
+    if not stage_a_latencies and STAGE_A_FALLBACK_ENABLED and STAGE_A_FALLBACK_URLS:
+        for url in STAGE_A_FALLBACK_URLS:
+            try:
+                r, latency, err = do_request(url, proxies)
+                if err:
+                    continue
+                if r.status_code not in STAGE_A_OK_STATUSES:
+                    continue
+                if HIJACK_GUARD_ENABLED:
+                    expected_host = urllib.parse.urlparse(url).hostname or ""
+                    final_host = urllib.parse.urlparse(r.url).hostname or ""
+                    if expected_host and final_host and expected_host != final_host:
+                        continue
+                stage_a_latencies.append(latency)
+                break
+            except Exception:
+                continue
+
     if not stage_a_latencies:
         result["reason"] = result["reason"] or "stageA no successful probes"
         return result
     result["latency_ms"] = int(min(stage_a_latencies))
 
     # Layer B: anti-fallback check on non-whitelisted domains
-    if not L7_STAGE_B_ENABLED or not STAGE_B_URLS:
+    if not L7_STAGE_B_ENABLED or not STAGE_B_TARGETS:
         result["reason"] = "stageB disabled"
         return result
 
     stage_b_passed = False
-    for url in STAGE_B_URLS:
+    for target in STAGE_B_TARGETS:
         try:
-            r, _, err = do_request(url, proxies)
-            if err:
-                continue
-            expected_host = urllib.parse.urlparse(url).hostname or ""
-            final_host = urllib.parse.urlparse(r.url).hostname or ""
-            body = (r.text or "")[:200].lower()
-            if r.status_code not in STAGE_B_OK_STATUSES:
-                continue
-            if expected_host and final_host and expected_host != final_host:
-                continue
-            if expected_host and expected_host not in (final_host + body):
-                continue
-            stage_b_passed = True
-            break
+            ok, _ = check_target_via_proxy(target, proxies)
+            if ok:
+                stage_b_passed = True
+                break
         except Exception:
             continue
     if not stage_b_passed:
         result["reason"] = "stageB fallback_or_mismatch"
         return result
+
+    # Layer F: real-world browsing profile (несколько доменов, минимум N успешных)
+    if REAL_WORLD_CHECK_ENABLED and REAL_WORLD_TARGETS:
+        passed = 0
+        for target in REAL_WORLD_TARGETS:
+            try:
+                ok, _ = check_target_via_proxy(target, proxies)
+                if ok:
+                    passed += 1
+            except Exception:
+                continue
+        if passed < REAL_WORLD_MIN_SUCCESS:
+            result["reason"] = f"stageF real_world_failed {passed}/{len(REAL_WORLD_TARGETS)}"
+            return result
+        result["real_world_passed"] = passed
+    else:
+        result["real_world_passed"] = 0
+
+    # Layer G: nonce echo integrity (anti-facade / anti-static-fallback)
+    if NONCE_PROBE_ENABLED:
+        nonce_ok, nonce_reason = nonce_probe_check(proxies)
+        if not nonce_ok:
+            result["reason"] = f"stageG {nonce_reason}"
+            return result
+        result["nonce_probe"] = nonce_reason
 
     # Layer C: sustained traffic test (>=1MB endpoint)
     try:
@@ -446,10 +668,16 @@ def run_validation_layers(proxies):
                 result["reason"] = "stageD private_or_loopback_ip"
                 return result
 
-        if VERIFY_EGRESS_IP and proxy_ip and proxy_ip != "unknown":
-            direct_ip = get_echo_ip(proxies=None)
+        if VERIFY_IP_NOT_LOCAL and proxy_ip and proxy_ip != "unknown":
+            direct_ip = get_local_egress_ip()
             if direct_ip and direct_ip == proxy_ip:
                 result["reason"] = "stageD same_as_local_ip"
+                return result
+
+        if VERIFY_EGRESS_IP and proxy_ip and proxy_ip != "unknown":
+            direct_ip = get_local_egress_ip()
+            if not direct_ip:
+                result["reason"] = "stageD cannot_get_local_ip"
                 return result
 
         if EXPECTED_COUNTRY_CODES and proxy_ip and proxy_ip != "unknown":
@@ -487,13 +715,13 @@ def generate_config(uuid, host, port, params, local_port):
             "shortId": get_param(params, "sid", ""),
             "spiderX": ""
         }
-        alpns = parse_alpn_list(params)
+        alpns, _ = parse_alpn_list(params)
         if alpns:
             stream_settings["realitySettings"]["alpn"] = alpns
 
     elif security == "tls":
         stream_settings["tlsSettings"] = {"serverName": sni}
-        alpns = parse_alpn_list(params)
+        alpns, _ = parse_alpn_list(params)
         if alpns:
             stream_settings["tlsSettings"]["alpn"] = alpns
 
@@ -566,12 +794,20 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
-        uuid = parsed.username
+        raw_uuid = parsed.username
         host = parsed.hostname
         port = parsed.port or 443
         params = urllib.parse.parse_qs(parsed.query)
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
         metadata["remark"] = remark
+        metadata["raw_uuid"] = raw_uuid
+        alpns, alpn_malformed = parse_alpn_list(params)
+        metadata["alpn"] = alpns
+        metadata["alpn_malformed"] = alpn_malformed
+        if alpn_malformed:
+            print(f"⚠️ [{idx}] ALPN нормализован: {get_param(params, 'alpn', '')} -> {','.join(alpns) or 'none'}")
+
+        uuid = normalize_uuid(raw_uuid)
         metadata["uuid"] = uuid
 
         if not uuid or not host:
@@ -579,7 +815,7 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
-        if not is_valid_uuid(uuid):
+        if not is_valid_uuid(raw_uuid):
             metadata["reason"] = "❌ невалидный UUID"
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
@@ -696,14 +932,34 @@ def save(link):
         return True
 
 
+def reserve_success_ip(ip_value):
+    if MAX_SUCCESS_PER_EGRESS_IP <= 0:
+        return True
+    ip = (ip_value or "").strip()
+    if not ip or ip == "unknown":
+        return True
+    with lock:
+        if success_ip_counter[ip] >= MAX_SUCCESS_PER_EGRESS_IP:
+            return False
+        success_ip_counter[ip] += 1
+    return True
+
+
 def save_report():
     ensure_parent_dir(REPORT_FILE)
     payload = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "paths": {
+            "targets_file": TARGETS_PATH,
+            "results_file": RESULTS_FILE,
+            "report_file": REPORT_FILE,
+        },
         "summary": {
             "checked": len(report_items),
             "ok": sum(1 for i in report_items if i.get("status") == "WORKING"),
             "provider_block_suspected": sum(1 for i in report_items if i.get("classification") == "provider_block_suspected"),
             "bad_uuid_or_link": sum(1 for i in report_items if i.get("classification") == "bad_uuid_or_link"),
+            "duplicate_egress_ip": sum(1 for i in report_items if i.get("classification") == "duplicate_egress_ip"),
         },
         "network_emulation": {
             "enabled": NET_EMU_ENABLED,
@@ -715,10 +971,12 @@ def save_report():
         "items": report_items,
     }
 
-    with open(REPORT_FILE, "w", encoding="utf-8") as f:
+    temp_report_file = f"{REPORT_FILE}.tmp"
+    with open(temp_report_file, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+    os.replace(temp_report_file, REPORT_FILE)
 
-    print(f"🧾 report: {REPORT_FILE}")
+    print(f"🧾 report: {os.path.abspath(REPORT_FILE)}")
 
 # ================= MAIN =================
 
@@ -737,6 +995,7 @@ def main():
         print("❌ нет targets.txt")
         return
 
+    ensure_parent_dir(RESULTS_FILE)
     open(RESULTS_FILE, "w").close()
 
     links = []
@@ -761,7 +1020,9 @@ def main():
     print(
         "🧪 L7 profile: "
         f"stage_a_all={L7_REQUIRE_STAGE_A_ALL}, "
-        f"stage_b_enabled={L7_STAGE_B_ENABLED}, "
+        f"stage_b_enabled={L7_STAGE_B_ENABLED}({len(STAGE_B_TARGETS)} targets), "
+        f"real_world={REAL_WORLD_CHECK_ENABLED}({REAL_WORLD_MIN_SUCCESS}/{len(REAL_WORLD_TARGETS)}), "
+        f"nonce_probe={NONCE_PROBE_ENABLED}, "
         f"mimic_dpi_delay={MIMIC_DPI_DELAY}, "
         f"network_emu={NET_EMU_ENABLED}\n"
     )
@@ -774,11 +1035,35 @@ def main():
                 print("🛑 лимит достигнут")
                 break
 
-            result = f.result()
+            try:
+                result = f.result()
+            except Exception as e:
+                reason = f"💥 future_error {type(e).__name__}"
+                print(f"❌ {reason}")
+                fail_reasons[reason] += 1
+                report_items.append({
+                    "index": -1,
+                    "link": futures[f],
+                    "status": "DEAD",
+                    "latency_ms": None,
+                    "download_kbps": 0,
+                    "ip": "",
+                    "classification": "unknown",
+                    "reason": reason,
+                    "remark": "",
+                })
+                continue
             if result is None:
                 continue
 
             ok, reason, metadata = result
+            if ok and not reserve_success_ip(metadata.get("ip", "")):
+                ok = False
+                reason = f"❌ duplicate_egress_ip limit={MAX_SUCCESS_PER_EGRESS_IP} ip={metadata.get('ip', '')}"
+                metadata["status"] = "DEAD"
+                metadata["reason"] = reason
+                metadata["classification"] = "duplicate_egress_ip"
+
             report_items.append(metadata)
 
             if ok:

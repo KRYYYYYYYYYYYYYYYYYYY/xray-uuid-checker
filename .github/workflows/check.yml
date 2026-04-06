@@ -32,7 +32,9 @@ jobs:
           git config --global user.name "UUID-Checker-Bot"
           git config --global user.email "bot@github.com"
           git add results/valid.txt || true
-          # Пушим только если файл изменился и он не пустой
-          if [ -s results/valid.txt ]; then
-            git diff --quiet && git diff --staged --quiet || (git commit -m "Update valid UUIDs [skip ci]" && git push)
+          git add results/report.json || true
+          # Пушим, если есть изменения в валидных ссылках или в отчете
+          if ! git diff --cached --quiet; then
+            git commit -m "Update scan results [skip ci]"
+            git push
           fi
