@@ -19,9 +19,13 @@
     "https://connectivitycheck.gstatic.com/generate_204"
   ],
   "l7_stage_b_urls": [
-    "https://www.google.com/generate_204"
+    "https://www.google.com/generate_204",
+    "https://speed.cloudflare.com/__down?bytes=1048576"
   ],
-  "l7_enforce_final_url_host": true,
+  "hijack_guard_enabled": true,
+  "verify_egress_ip": true,
+  "reject_private_egress_ip": true,
+  "ip_echo_url": "https://api64.ipify.org?format=json",
   "mimic_dpi_delay_min_sec": 0.08,
   "mimic_dpi_delay_max_sec": 0.22,
   "workers": 16,
