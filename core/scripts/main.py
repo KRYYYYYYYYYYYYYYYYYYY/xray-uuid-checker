@@ -15,10 +15,23 @@ import urllib3
 
 # ================= LOAD CONFIG =================
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, "..", ".."))
+
 CONFIG_PATH_CANDIDATES = (
     "config_test.json",
     os.path.join("client", "config_test.json"),
+    os.path.join(REPO_ROOT, "config_test.json"),
+    os.path.join(REPO_ROOT, "client", "config_test.json"),
 )
+
+
+def resolve_repo_path(path_value):
+    if not path_value:
+        return path_value
+    if os.path.isabs(path_value):
+        return path_value
+    return os.path.join(REPO_ROOT, path_value)
 
 
 def load_runtime_config():
@@ -26,7 +39,7 @@ def load_runtime_config():
         if os.path.exists(path):
             with open(path) as f:
                 cfg = json.load(f)
-            print(f"📦 config: {path}")
+            print(f"📦 config: {os.path.abspath(path)}")
             return cfg
     print("⚠️ config_test.json не найден, используются значения по умолчанию")
     return {}
@@ -36,11 +49,11 @@ CFG = load_runtime_config()
 
 # ================= CONFIG =================
 
-TARGETS_PATH = "targets.txt"
-RESULTS_FILE = "results/valid.txt"
-REPORT_FILE = CFG.get("report_file", "results/report.json")
+TARGETS_PATH = resolve_repo_path(CFG.get("targets_file", "targets.txt"))
+RESULTS_FILE = resolve_repo_path(CFG.get("results_file", "results/valid.txt"))
+REPORT_FILE = resolve_repo_path(CFG.get("report_file", "results/report.json"))
 XRAY_BIN = CFG.get("xray_bin", "/usr/local/bin/xray")
-TEMP_DIR = "temp_configs"
+TEMP_DIR = resolve_repo_path(CFG.get("temp_dir", "temp_configs"))
 
 MAX_WORKERS = CFG.get("workers", 20)
 LEGACY_L7_MAX_CANDIDATES = CFG.get("l7_max_candidates")
@@ -856,7 +869,7 @@ def save_report():
         json.dump(payload, f, ensure_ascii=False, indent=2)
     os.replace(temp_report_file, REPORT_FILE)
 
-    print(f"🧾 report: {REPORT_FILE}")
+    print(f"🧾 report: {os.path.abspath(REPORT_FILE)}")
 
 # ================= MAIN =================
 
@@ -875,6 +888,7 @@ def main():
         print("❌ нет targets.txt")
         return
 
+    ensure_parent_dir(RESULTS_FILE)
     open(RESULTS_FILE, "w").close()
 
     links = []
