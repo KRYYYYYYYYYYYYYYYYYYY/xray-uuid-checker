@@ -5,6 +5,7 @@ import socket
 import subprocess
 import urllib.parse
 import random
+import uuid as uuidlib
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
@@ -36,7 +37,8 @@ CFG = load_runtime_config()
 
 TARGETS_PATH = "targets.txt"
 RESULTS_FILE = "results/valid.txt"
-XRAY_BIN = "/usr/local/bin/xray"
+REPORT_FILE = CFG.get("report_file", "results/report.json")
+XRAY_BIN = CFG.get("xray_bin", "/usr/local/bin/xray")
 TEMP_DIR = "temp_configs"
 
 MAX_WORKERS = CFG.get("workers", 20)
@@ -62,6 +64,13 @@ L7_TIMEOUT = CFG.get("l7_timeout_sec", max(2.5, RECV_TIMEOUT))
 MIMIC_DPI_DELAY = CFG.get("mimic_dpi_delay", False)
 MIMIC_DPI_DELAY_MIN = CFG.get("mimic_dpi_delay_min_sec", 0.08)
 MIMIC_DPI_DELAY_MAX = CFG.get("mimic_dpi_delay_max_sec", 0.22)
+
+NETWORK_EMULATION = CFG.get("network_emulation", {})
+NET_EMU_ENABLED = NETWORK_EMULATION.get("enabled", False)
+NET_EMU_BASE_LATENCY_MS = NETWORK_EMULATION.get("base_latency_ms", 0)
+NET_EMU_JITTER_MS = NETWORK_EMULATION.get("jitter_ms", 0)
+NET_EMU_PACKET_LOSS = NETWORK_EMULATION.get("packet_loss_probability", 0.0)
+NET_EMU_BURST_DELAY_MS = NETWORK_EMULATION.get("burst_delay_ms", 0)
 
 WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
@@ -114,8 +123,10 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 success_count = 0
 fail_reasons = Counter()
+report_items = []
 
 # ================= WHITELIST =================
+
 
 def normalize_domain(raw_domain):
     if not raw_domain:
@@ -153,9 +164,11 @@ def load_whitelist():
     print(f"✅ доменов: {len(domains)}")
     return domains
 
+
 WHITELIST_DOMAINS = load_whitelist()
 
 # ================= UTILS =================
+
 
 def wait_socks(port, timeout=5):
     start = time.time()
@@ -165,7 +178,7 @@ def wait_socks(port, timeout=5):
             with socket.create_connection(("127.0.0.1", port), timeout=1):
                 elapsed = (time.time() - start) * 1000
                 return True, elapsed
-        except:
+        except Exception:
             time.sleep(0.1)
 
     return False, None
@@ -175,9 +188,50 @@ def get_param(params, key, default=""):
     values = params.get(key)
     if not values:
         return default
-    # В VLESS-ссылках иногда встречаются дубли параметров (например sni/fp/flow).
-    # Используем "последнее значение побеждает", как в большинстве query string кейсов.
     return values[-1]
+
+
+def is_valid_uuid(value):
+    try:
+        parsed = uuidlib.UUID(str(value))
+        return str(parsed) == str(value).lower()
+    except ValueError:
+        return False
+
+
+def emulate_network_conditions():
+    if not NET_EMU_ENABLED:
+        return True
+
+    if NET_EMU_PACKET_LOSS > 0 and random.random() < NET_EMU_PACKET_LOSS:
+        return False
+
+    extra_ms = NET_EMU_BASE_LATENCY_MS
+    if NET_EMU_JITTER_MS > 0:
+        extra_ms += random.uniform(-NET_EMU_JITTER_MS, NET_EMU_JITTER_MS)
+    if NET_EMU_BURST_DELAY_MS > 0 and random.random() < 0.15:
+        extra_ms += NET_EMU_BURST_DELAY_MS
+
+    if extra_ms > 0:
+        time.sleep(extra_ms / 1000.0)
+
+    return True
+
+
+def classify_result(ok, reason):
+    if ok:
+        return "ok"
+
+    r = (reason or "").lower()
+    if "невалидный uuid" in r or "не vless" in r or "битый vless" in r:
+        return "bad_uuid_or_link"
+    if "нет sni" in r or "вне whitelist" in r:
+        return "config_mismatch"
+    if "xray не поднялся" in r:
+        return "xray_runtime_error"
+    if "не проходит l7" in r or "timeout" in r or "proxyerror" in r:
+        return "provider_block_suspected"
+    return "unknown"
 
 
 def test_proxy(proxies):
@@ -188,6 +242,13 @@ def test_proxy(proxies):
     for url in STAGE_A_URLS:
         if MIMIC_DPI_DELAY:
             time.sleep(random.uniform(MIMIC_DPI_DELAY_MIN, MIMIC_DPI_DELAY_MAX))
+
+        if not emulate_network_conditions():
+            stage_a_reason = f"stageA synthetic_packet_loss {url}"
+            if L7_REQUIRE_STAGE_A_ALL:
+                return False, None, stage_a_reason
+            continue
+
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
@@ -225,6 +286,9 @@ def test_proxy(proxies):
     for url in STAGE_B_URLS:
         if MIMIC_DPI_DELAY:
             time.sleep(random.uniform(MIMIC_DPI_DELAY_MIN, MIMIC_DPI_DELAY_MAX))
+        if not emulate_network_conditions():
+            stage_b_reason = f"stageB synthetic_packet_loss {url}"
+            continue
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
@@ -237,10 +301,10 @@ def test_proxy(proxies):
             stage_b_reason = f"stageB {type(e).__name__} {url}"
             continue
 
-    # Если stage B не прошёл, возвращаем причину stage B, но latency из stage A.
     return False, stage_a_best_latency, stage_b_reason
 
 # ================= XRAY =================
+
 
 def generate_config(uuid, host, port, params, local_port):
     security = get_param(params, "security", "none")
@@ -300,6 +364,7 @@ def generate_config(uuid, host, port, params, local_port):
 
 # ================= CORE =================
 
+
 def check_link(link, idx):
     global success_count
 
@@ -310,30 +375,54 @@ def check_link(link, idx):
     local_port = 20000 + (idx % 1000)
     temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
     process = None
+    metadata = {
+        "index": idx,
+        "link": link,
+        "status": "failed",
+        "latency_ms": None,
+        "classification": "unknown",
+        "reason": "",
+        "remark": "",
+    }
 
     try:
         parsed = urllib.parse.urlparse(link)
 
         if parsed.scheme != "vless":
-            return False, "❌ не VLESS"
+            metadata["reason"] = "❌ не VLESS"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
 
         uuid = parsed.username
         host = parsed.hostname
         port = parsed.port or 443
         params = urllib.parse.parse_qs(parsed.query)
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
+        metadata["remark"] = remark
+        metadata["uuid"] = uuid
 
         if not uuid or not host:
-            return False, "❌ битый VLESS (нет uuid/host)"
+            metadata["reason"] = "❌ битый VLESS (нет uuid/host)"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
+
+        if not is_valid_uuid(uuid):
+            metadata["reason"] = "❌ невалидный UUID"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
 
         sni = get_param(params, "sni", "").lower()
 
         if not sni:
-            return False, "❌ нет SNI"
+            metadata["reason"] = "❌ нет SNI"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
 
         if sni not in WHITELIST_DOMAINS:
             if STRICT_SNI_WHITELIST:
-                return False, "🚫 SNI вне whitelist"
+                metadata["reason"] = "🚫 SNI вне whitelist"
+                metadata["classification"] = classify_result(False, metadata["reason"])
+                return False, metadata["reason"], metadata
             print(f"⚠️ [{idx}] SNI не в whitelist: {sni}")
 
         print(f"🔍 [{idx}] {remark}")
@@ -353,10 +442,14 @@ def check_link(link, idx):
         ok, handshake_ms = wait_socks(local_port)
 
         if not ok:
-            return False, "❌ Xray не поднялся"
+            metadata["reason"] = "❌ Xray не поднялся"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
 
         if handshake_ms > HANDSHAKE_LIMIT:
-            return False, f"⏱ handshake {int(handshake_ms)} ms"
+            metadata["reason"] = f"⏱ handshake {int(handshake_ms)} ms"
+            metadata["classification"] = classify_result(False, metadata["reason"])
+            return False, metadata["reason"], metadata
 
         proxies = {
             "http": f"socks5h://127.0.0.1:{local_port}",
@@ -368,16 +461,26 @@ def check_link(link, idx):
 
             if ok:
                 if latency and latency > MAX_LATENCY:
-                    return False, f"🐢 latency {int(latency)} ms"
+                    metadata["reason"] = f"🐢 latency {int(latency)} ms"
+                    metadata["classification"] = classify_result(False, metadata["reason"])
+                    return False, metadata["reason"], metadata
 
-                return True, f"⚡ {int(latency)} ms ({l7_reason})"
+                metadata["status"] = "ok"
+                metadata["latency_ms"] = int(latency) if latency else None
+                metadata["reason"] = f"⚡ {int(latency)} ms ({l7_reason})"
+                metadata["classification"] = classify_result(True, metadata["reason"])
+                return True, metadata["reason"], metadata
 
             time.sleep(SLEEP_BETWEEN)
 
-        return False, f"❌ не проходит L7 ({l7_reason})"
+        metadata["reason"] = f"❌ не проходит L7 ({l7_reason})"
+        metadata["classification"] = classify_result(False, metadata["reason"])
+        return False, metadata["reason"], metadata
 
     except Exception as e:
-        return False, f"💥 {str(e)[:60]}"
+        metadata["reason"] = f"💥 {str(e)[:60]}"
+        metadata["classification"] = classify_result(False, metadata["reason"])
+        return False, metadata["reason"], metadata
 
     finally:
         if process:
@@ -392,6 +495,7 @@ def check_link(link, idx):
             os.remove(temp_config)
 
 # ================= SAVE =================
+
 
 def save(link):
     global success_count
@@ -410,15 +514,42 @@ def save(link):
 
         return True
 
+
+def save_report():
+    os.makedirs(os.path.dirname(REPORT_FILE), exist_ok=True)
+    payload = {
+        "summary": {
+            "checked": len(report_items),
+            "ok": sum(1 for i in report_items if i.get("status") == "ok"),
+            "provider_block_suspected": sum(1 for i in report_items if i.get("classification") == "provider_block_suspected"),
+            "bad_uuid_or_link": sum(1 for i in report_items if i.get("classification") == "bad_uuid_or_link"),
+        },
+        "network_emulation": {
+            "enabled": NET_EMU_ENABLED,
+            "base_latency_ms": NET_EMU_BASE_LATENCY_MS,
+            "jitter_ms": NET_EMU_JITTER_MS,
+            "packet_loss_probability": NET_EMU_PACKET_LOSS,
+            "burst_delay_ms": NET_EMU_BURST_DELAY_MS,
+        },
+        "items": report_items,
+    }
+
+    with open(REPORT_FILE, "w") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=2)
+
+    print(f"🧾 report: {REPORT_FILE}")
+
 # ================= MAIN =================
+
 
 def fetch_links_from_url(url):
     try:
         r = session.get(url, timeout=15)
         r.raise_for_status()
         return [l.strip() for l in r.text.splitlines() if l.strip()]
-    except:
+    except Exception:
         return []
+
 
 def main():
     if not os.path.exists(TARGETS_PATH):
@@ -450,7 +581,8 @@ def main():
         "🧪 L7 profile: "
         f"stage_a_all={L7_REQUIRE_STAGE_A_ALL}, "
         f"stage_b_enabled={L7_STAGE_B_ENABLED}, "
-        f"mimic_dpi_delay={MIMIC_DPI_DELAY}\n"
+        f"mimic_dpi_delay={MIMIC_DPI_DELAY}, "
+        f"network_emu={NET_EMU_ENABLED}\n"
     )
 
     with ThreadPoolExecutor(MAX_WORKERS) as ex:
@@ -465,7 +597,8 @@ def main():
             if result is None:
                 continue
 
-            ok, reason = result
+            ok, reason, metadata = result
+            report_items.append(metadata)
 
             if ok:
                 print(f"✅ {reason}")
@@ -479,7 +612,9 @@ def main():
         for reason, count in fail_reasons.most_common(5):
             print(f"  - {count}x {reason}")
 
+    save_report()
     print(f"\n🎯 готово: {success_count}")
+
 
 if __name__ == "__main__":
     main()
