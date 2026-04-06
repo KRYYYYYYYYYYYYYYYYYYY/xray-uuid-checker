@@ -55,8 +55,6 @@ WHITELIST_URLS = [
 # L7 endpoint'ы (только проверка факта HTTP-доступа)
 TEST_URLS = CFG.get("l7_test_urls") or [
     "https://www.gstatic.com/generate_204",
-    "https://connectivitycheck.gstatic.com/generate_204",
-    "https://www.google.com/generate_204",
 ]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
