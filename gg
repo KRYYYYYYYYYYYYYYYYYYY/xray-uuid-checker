@@ -1,1 +1,190 @@
-
+2026/04/06 16:23:04.850073 [Debug] app/log: Logger started
+2026/04/06 16:23:04.861581 [Info] app/dns: DNS: created UDP client initialized for 1.1.1.1:53
+2026/04/06 16:23:04.870207 [Info] app/dns: DNS: created UDP client initialized for 1.1.1.1:53
+2026/04/06 16:23:04.878550 [Info] app/dns: DNS: created UDP client initialized for 8.8.8.8:53
+2026/04/06 16:23:04.905169 [Debug] app/proxyman/inbound: creating stream worker on 127.0.0.1:10809
+2026/04/06 16:23:04.905263 [Debug] app/proxyman/inbound: creating stream worker on 127.0.0.1:10808
+2026/04/06 16:23:04.905302 [Debug] app/stats: create new counter outbound>>>proxy>>>traffic>>>uplink
+2026/04/06 16:23:04.905331 [Debug] app/stats: create new counter outbound>>>proxy>>>traffic>>>downlink
+2026/04/06 16:23:04.905356 [Debug] app/stats: create new counter outbound>>>direct>>>traffic>>>uplink
+2026/04/06 16:23:04.905380 [Debug] app/stats: create new counter outbound>>>direct>>>traffic>>>downlink
+2026/04/06 16:23:04.905404 [Debug] app/stats: create new counter outbound>>>block>>>traffic>>>uplink
+2026/04/06 16:23:04.905427 [Debug] app/stats: create new counter outbound>>>block>>>traffic>>>downlink
+2026/04/06 16:23:04.905461 [Info] transport/internet/tcp: listening TCP on 127.0.0.1:10809
+2026/04/06 16:23:04.905490 [Info] transport/internet/udp: listening UDP on 127.0.0.1:10809
+2026/04/06 16:23:04.905516 [Info] transport/internet/tcp: listening TCP on 127.0.0.1:10808
+2026/04/06 16:23:04.905664 [Info] app/commander: API server listening on [::1]:10085
+2026/04/06 16:23:04.905698 [Warning] core: Xray 26.2.6 started
+2026/04/06 16:23:05.573000 [Info] [686238470] proxy/socks: TCP Connect request to tcp:18.97.36.59:443
+2026/04/06 16:23:05.574081 [Info] [686238470] app/dispatcher: sniffed domain: nexus-websocket-a.intercom.io
+2026/04/06 16:23:05.574413 [Debug] app/dns: domain nexus-websocket-a.intercom.io will use DNS in order: [UDP:1.1.1.1:53 UDP:1.1.1.1:53 UDP:8.8.8.8:53]
+2026/04/06 16:23:05.574542 [Info] app/dns: UDP:1.1.1.1:53 querying DNS for: nexus-websocket-a.intercom.io.
+2026/04/06 16:23:05.574634 [Debug] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:05.574712 [Info] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:05.574772 [Debug] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:05.574835 [Info] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:05.574891 [Info] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:05.574937 [Debug] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:05.610991 [Info] [1833556749] proxy/socks: TCP Connect request to tcp:142.251.20.91:443
+2026/04/06 16:23:05.611768 [Info] [1833556749] app/dispatcher: sniffed domain: www.youtube.com
+2026/04/06 16:23:05.611948 [Debug] app/dns: domain www.youtube.com will use DNS in order: [UDP:1.1.1.1:53 UDP:1.1.1.1:53 UDP:8.8.8.8:53]
+2026/04/06 16:23:05.612039 [Info] app/dns: UDP:1.1.1.1:53 querying DNS for: www.youtube.com.
+2026/04/06 16:23:05.612115 [Debug] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:05.612168 [Debug] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.826062 [Info] [2221576499] proxy/socks: client UDP connection from udp:127.0.0.1:57392
+2026/04/06 16:23:06.826202 [Debug] [2221576499] proxy/socks: send packet to udp:1.1.1.1:53 with 34 bytes
+2026/04/06 16:23:06.826259 [Debug] [2221576499] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.826297 [Info] [2221576499] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.826712 [Info] [2221576499] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.826857 [Info] [2221576499] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.826938 [Debug] [2221576499] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.832963 [Info] [477985768] proxy/socks: client UDP connection from udp:127.0.0.1:51344
+2026/04/06 16:23:06.833024 [Debug] [477985768] proxy/socks: send packet to udp:1.1.1.1:53 with 34 bytes
+2026/04/06 16:23:06.833060 [Debug] [477985768] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.833070 [Info] [477985768] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.833564 [Info] [477985768] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.833610 [Info] [477985768] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.833619 [Debug] [477985768] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.838320 [Info] [1803031461] proxy/socks: client UDP connection from udp:127.0.0.1:52463
+2026/04/06 16:23:06.838382 [Debug] [1803031461] proxy/socks: send packet to udp:1.1.1.1:53 with 36 bytes
+2026/04/06 16:23:06.838401 [Debug] [1803031461] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.838408 [Info] [1803031461] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.838415 [Info] [591877109] proxy/socks: client UDP connection from udp:127.0.0.1:59176
+2026/04/06 16:23:06.838421 [Debug] [591877109] proxy/socks: send packet to udp:1.1.1.1:53 with 43 bytes
+2026/04/06 16:23:06.838427 [Debug] [591877109] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.838432 [Info] [591877109] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.838438 [Info] [3839676660] proxy/socks: client UDP connection from udp:127.0.0.1:49365
+2026/04/06 16:23:06.838444 [Debug] [3839676660] proxy/socks: send packet to udp:1.1.1.1:53 with 43 bytes
+2026/04/06 16:23:06.838452 [Debug] [3839676660] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.838507 [Info] [3839676660] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.839387 [Info] [1803031461] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.839429 [Info] [1803031461] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.839439 [Debug] [1803031461] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.839446 [Info] [591877109] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.839452 [Info] [591877109] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.839457 [Debug] [591877109] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.839463 [Info] [3839676660] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.839468 [Info] [3839676660] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.839473 [Debug] [3839676660] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.848578 [Info] [2378403443] proxy/socks: client UDP connection from udp:127.0.0.1:57249
+2026/04/06 16:23:06.848721 [Debug] [2378403443] proxy/socks: send packet to udp:1.1.1.1:53 with 36 bytes
+2026/04/06 16:23:06.848771 [Debug] [2378403443] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.848802 [Info] [2378403443] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.848835 [Info] [2378403443] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.848869 [Info] [2378403443] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.848901 [Debug] [2378403443] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.898172 [Info] [3745261134] proxy/socks: client UDP connection from udp:127.0.0.1:37216
+2026/04/06 16:23:06.898241 [Debug] [3745261134] proxy/socks: send packet to udp:1.1.1.1:53 with 47 bytes
+2026/04/06 16:23:06.898259 [Debug] [3745261134] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.898268 [Info] [3745261134] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.899236 [Info] [3745261134] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.899326 [Info] [3745261134] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.899346 [Debug] [3745261134] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.902805 [Info] [1374888062] proxy/socks: client UDP connection from udp:127.0.0.1:52241
+2026/04/06 16:23:06.903141 [Debug] [1374888062] proxy/socks: send packet to udp:1.1.1.1:53 with 47 bytes
+2026/04/06 16:23:06.903236 [Debug] [1374888062] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:06.903299 [Info] [1374888062] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:06.903321 [Info] [1374888062] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:06.903330 [Info] [1374888062] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:06.903337 [Debug] [1374888062] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.472607 [Info] [1021295888] proxy/socks: client UDP connection from udp:127.0.0.1:51485
+2026/04/06 16:23:07.472745 [Debug] [1021295888] proxy/socks: send packet to udp:1.1.1.1:53 with 37 bytes
+2026/04/06 16:23:07.472801 [Debug] [1021295888] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.472879 [Info] [1021295888] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.473806 [Info] [1021295888] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.473937 [Info] [1021295888] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.473982 [Debug] [1021295888] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.475028 [Info] [1530524938] proxy/socks: client UDP connection from udp:127.0.0.1:33222
+2026/04/06 16:23:07.475153 [Debug] [1530524938] proxy/socks: send packet to udp:1.1.1.1:53 with 37 bytes
+2026/04/06 16:23:07.475197 [Debug] [1530524938] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.475229 [Info] [1530524938] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.479931 [Info] [1530524938] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.480056 [Info] [1530524938] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.480118 [Debug] [1530524938] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.854903 [Info] [2212984436] proxy/socks: client UDP connection from udp:127.0.0.1:56238
+2026/04/06 16:23:07.855031 [Debug] [2212984436] proxy/socks: send packet to udp:1.1.1.1:53 with 34 bytes
+2026/04/06 16:23:07.855077 [Debug] [2212984436] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.855111 [Info] [2212984436] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.855141 [Info] [1815602049] proxy/socks: client UDP connection from udp:127.0.0.1:44250
+2026/04/06 16:23:07.855172 [Debug] [1815602049] proxy/socks: send packet to udp:1.1.1.1:53 with 34 bytes
+2026/04/06 16:23:07.855210 [Debug] [1815602049] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.855239 [Info] [1815602049] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.856344 [Info] [2212984436] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.856472 [Info] [2212984436] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.856533 [Info] [1815602049] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.856568 [Debug] [2212984436] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.858047 [Info] [1815602049] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.858151 [Debug] [1815602049] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.860224 [Info] [3129571825] proxy/socks: client UDP connection from udp:127.0.0.1:41766
+2026/04/06 16:23:07.860314 [Debug] [3129571825] proxy/socks: send packet to udp:1.1.1.1:53 with 43 bytes
+2026/04/06 16:23:07.860332 [Debug] [3129571825] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.860340 [Info] [3129571825] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.860567 [Info] [3129571825] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.860683 [Info] [2687764399] proxy/socks: client UDP connection from udp:127.0.0.1:56577
+2026/04/06 16:23:07.860729 [Info] [3129571825] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.860762 [Debug] [3129571825] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.860802 [Debug] [2687764399] proxy/socks: send packet to udp:1.1.1.1:53 with 43 bytes
+2026/04/06 16:23:07.860858 [Debug] [2687764399] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.860913 [Info] [2687764399] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.860954 [Info] [2687764399] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.860986 [Info] [2687764399] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.861013 [Debug] [2687764399] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.861679 [Info] [4058739662] proxy/socks: client UDP connection from udp:127.0.0.1:36858
+2026/04/06 16:23:07.861732 [Debug] [4058739662] proxy/socks: send packet to udp:1.1.1.1:53 with 36 bytes
+2026/04/06 16:23:07.861749 [Debug] [4058739662] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.861757 [Info] [4058739662] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.862349 [Info] [4058739662] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.862449 [Info] [4058739662] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.862484 [Debug] [4058739662] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.862517 [Info] [2685033245] proxy/socks: client UDP connection from udp:127.0.0.1:50497
+2026/04/06 16:23:07.862552 [Debug] [2685033245] proxy/socks: send packet to udp:1.1.1.1:53 with 36 bytes
+2026/04/06 16:23:07.862585 [Debug] [2685033245] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.862613 [Info] [2685033245] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.862643 [Info] [2685033245] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.862671 [Info] [2685033245] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.862698 [Debug] [2685033245] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.920922 [Info] [3380942833] proxy/socks: client UDP connection from udp:127.0.0.1:36889
+2026/04/06 16:23:07.920992 [Debug] [3380942833] proxy/socks: send packet to udp:1.1.1.1:53 with 47 bytes
+2026/04/06 16:23:07.921006 [Debug] [3380942833] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.921014 [Info] [3380942833] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.921464 [Info] [3380942833] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.921506 [Info] [3380942833] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.921516 [Debug] [3380942833] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.921697 [Info] [688972137] proxy/socks: client UDP connection from udp:127.0.0.1:53576
+2026/04/06 16:23:07.921726 [Debug] [688972137] proxy/socks: send packet to udp:1.1.1.1:53 with 47 bytes
+2026/04/06 16:23:07.921734 [Debug] [688972137] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:07.921740 [Info] [688972137] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:07.922078 [Info] [688972137] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:07.922125 [Info] [688972137] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:07.922134 [Debug] [688972137] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.490088 [Info] [3254232044] proxy/socks: client UDP connection from udp:127.0.0.1:45420
+2026/04/06 16:23:08.490146 [Debug] [3254232044] proxy/socks: send packet to udp:1.1.1.1:53 with 37 bytes
+2026/04/06 16:23:08.490157 [Debug] [3254232044] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:08.490164 [Info] [3254232044] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:08.490374 [Info] [3254232044] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:08.490477 [Info] [3254232044] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.490602 [Debug] [3254232044] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.491672 [Info] [2732980694] proxy/socks: client UDP connection from udp:127.0.0.1:38831
+2026/04/06 16:23:08.491720 [Debug] [2732980694] proxy/socks: send packet to udp:1.1.1.1:53 with 37 bytes
+2026/04/06 16:23:08.491730 [Debug] [2732980694] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:08.491737 [Info] [2732980694] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:08.492205 [Info] [2732980694] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:08.492293 [Info] [2732980694] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.492357 [Debug] [2732980694] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.557144 [Info] [3984227479] proxy/socks: client UDP connection from udp:127.0.0.1:37692
+2026/04/06 16:23:08.557270 [Debug] [3984227479] proxy/socks: send packet to udp:1.1.1.1:53 with 35 bytes
+2026/04/06 16:23:08.557329 [Debug] [3984227479] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:08.557370 [Info] [3984227479] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:08.557863 [Info] [3984227479] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:08.557993 [Info] [3984227479] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.558042 [Debug] [3984227479] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.561495 [Info] [3330649065] proxy/socks: client UDP connection from udp:127.0.0.1:56365
+2026/04/06 16:23:08.561676 [Debug] [3330649065] proxy/socks: send packet to udp:1.1.1.1:53 with 35 bytes
+2026/04/06 16:23:08.561767 [Debug] [3330649065] transport/internet/udp: dispatch request to: udp:1.1.1.1:53
+2026/04/06 16:23:08.561849 [Info] [3330649065] transport/internet/udp: establishing new connection for udp:1.1.1.1:53
+2026/04/06 16:23:08.562251 [Info] [3330649065] app/dispatcher: taking detour [proxy] for [udp:1.1.1.1:53]
+2026/04/06 16:23:08.562437 [Info] [3330649065] transport/internet/tcp: dialing TCP to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.562536 [Debug] [3330649065] transport/internet: dialing to tcp:45.15.128.75:8443
+2026/04/06 16:23:08.961447 [Info] [2279358798] proxy/socks: client UDP connection from udp:127.0.0.1:58537
+2026/04/06 16:23:08.961616 [Info] [4262027675] proxy/socks: client UDP connection from udp:127.0.0.1:51673
+2026/04/
