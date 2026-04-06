@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-04-06T18:24:24.200392+00:00",
+  "generated_at_utc": "2026-04-06T18:33:19.630907+00:00",
   "paths": {
     "targets_file": "/home/runner/work/xray-uuid-checker/xray-uuid-checker/targets.txt",
     "results_file": "/home/runner/work/xray-uuid-checker/xray-uuid-checker/results/valid.txt",
@@ -8,9 +8,9 @@
   "summary": {
     "checked": 17,
     "ok": 1,
-    "provider_block_suspected": 5,
+    "provider_block_suspected": 1,
     "bad_uuid_or_link": 0,
-    "duplicate_egress_ip": 11
+    "duplicate_egress_ip": 15
   },
   "network_emulation": {
     "enabled": true,
@@ -21,12 +21,82 @@
   },
   "items": [
     {
-      "index": 9,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2525252F#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "index": 0,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f777@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f777@45.15.128.75:8443?security=reality&alpn=h2%252Chttp%252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": null,
+      "download_kbps": 0,
+      "ip": "",
+      "classification": "provider_block_suspected",
+      "reason": "❌ unstable (0/3) stageA ReadTimeout https://www.gstatic.com/generate_204",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f777",
+      "alpn": [
+        "h2",
+        "http/1.1"
+      ],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f777",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": false,
+          "reason": "stageA SSLError https://www.gstatic.com/generate_204",
+          "latency_ms": null,
+          "download_kbps": 0,
+          "ip": "",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": false,
+              "reason": "SSLError"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": false,
+          "reason": "stageA SSLError https://www.gstatic.com/generate_204",
+          "latency_ms": null,
+          "download_kbps": 0,
+          "ip": "",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": false,
+              "reason": "SSLError"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": false,
+          "reason": "stageA ReadTimeout https://www.gstatic.com/generate_204",
+          "latency_ms": null,
+          "download_kbps": 0,
+          "ip": "",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": false,
+              "reason": "ReadTimeout"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252F#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
       "status": "WORKING",
-      "latency_ms": 93,
-      "download_kbps": 566,
+      "latency_ms": 87,
+      "download_kbps": 882,
       "ip": "45.15.128.75",
       "classification": "ok",
       "reason": "all_layers_passed",
@@ -39,72 +109,21 @@
       "attempt_runs": [
         {
           "attempt": 1,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 711,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 711
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 93,
-          "download_kbps": 566,
+          "latency_ms": 649,
+          "download_kbps": 675,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 93
+              "latency_ms": 649
             },
             {
               "stage": "B",
               "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
               "ok": true,
               "reason": "ok"
             },
@@ -135,7 +154,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 566
+              "kbps": 675
             },
             {
               "stage": "D",
@@ -145,18 +164,63 @@
           ]
         },
         {
+          "attempt": 2,
+          "ok": false,
+          "reason": "stageH negative_probe_failed 0/2",
+          "latency_ms": 92,
+          "download_kbps": 0,
+          "ip": "",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 92
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            }
+          ]
+        },
+        {
           "attempt": 3,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 139,
-          "download_kbps": 1187,
+          "latency_ms": 87,
+          "download_kbps": 882,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 139
+              "latency_ms": 87
             },
             {
               "stage": "B",
@@ -197,7 +261,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 1187
+              "kbps": 882
             },
             {
               "stage": "D",
@@ -209,15 +273,15 @@
       ],
       "why_accepted": {
         "stable_successes": "2/3",
-        "best_latency_ms": 93,
-        "best_download_kbps": 566,
+        "best_latency_ms": 87,
+        "best_download_kbps": 882,
         "egress_ip": "45.15.128.75",
         "layer_trace": [
           {
             "stage": "A",
             "url": "https://www.gstatic.com/generate_204",
             "ok": true,
-            "latency_ms": 93
+            "latency_ms": 87
           },
           {
             "stage": "B",
@@ -258,7 +322,7 @@
             "stage": "C",
             "ok": true,
             "bytes": 1048576,
-            "kbps": 566
+            "kbps": 882
           },
           {
             "stage": "D",
@@ -276,1292 +340,14 @@
       "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252525252525252F#🇵🇱 Poland [*CIDR]",
       "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252525252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
       "status": "DEAD",
-      "latency_ms": 123,
-      "download_kbps": 1135,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 691,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 691
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 142,
-          "download_kbps": 541,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 142
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 541
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 123,
-          "download_kbps": 1135,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 123
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 1135
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 123,
-        "best_download_kbps": 1135,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 123
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 1135
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 11,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2F#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": null,
-      "download_kbps": 0,
-      "ip": "",
-      "classification": "provider_block_suspected",
-      "reason": "❌ unstable (1/3) stageH negative_probe_failed 0/2",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 676,
-          "download_kbps": 445,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 676
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 445
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 110,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 110
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 110,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 110
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "index": 7,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---i10VPN---Join---i10VPN---Join---i10VPN---Join---i10VPN&headerType=none&fp=chrome&spx=/&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---i10VPN---Join---i10VPN---Join---i10VPN---Join---i10VPN&headerType=none&fp=chrome&spx=%2F&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": 97,
-      "download_kbps": 1215,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 661,
-          "download_kbps": 519,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 661
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 519
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 97,
-          "download_kbps": 1215,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 97
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 1215
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 98,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 98
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 97,
-        "best_download_kbps": 1215,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 97
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 1215
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 5,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2525252Chttp%2525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": null,
-      "download_kbps": 0,
-      "ip": "",
-      "classification": "provider_block_suspected",
-      "reason": "❌ unstable (1/3) stageH negative_probe_failed 0/2",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [
-        "h2",
-        "http/1.1"
-      ],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 689,
-          "download_kbps": 542,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 689
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 542
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 113,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 113
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 117,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 117
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "index": 2,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%252Chttp%252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2525252525252Chttp%2525252525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": null,
-      "download_kbps": 0,
-      "ip": "",
-      "classification": "provider_block_suspected",
-      "reason": "❌ unstable (1/3) stageH negative_probe_failed 0/2",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [
-        "h2",
-        "http/1.1"
-      ],
-      "alpn_malformed": true,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 697,
-          "download_kbps": 361,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 697
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 361
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 120,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 120
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 119,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 119
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "index": 6,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%252525252Chttp%252525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": 97,
-      "download_kbps": 1354,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [
-        "h2",
-        "http/1.1"
-      ],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 1016,
-          "download_kbps": 509,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 1016
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 509
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 97,
-          "download_kbps": 1354,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 97
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 1354
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 98,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 98
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 97,
-        "best_download_kbps": 1354,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 97
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 1354
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 3,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2Chttp%2F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
       "latency_ms": 105,
-      "download_kbps": 743,
+      "download_kbps": 877,
       "ip": "45.15.128.75",
       "classification": "duplicate_egress_ip",
       "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
       "remark": "🇵🇱 Poland [*CIDR]",
       "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [
-        "h2",
-        "http/1.1"
-      ],
+      "alpn": [],
       "alpn_malformed": false,
       "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
       "expected_server_ip": "45.15.128.75",
@@ -1570,15 +356,71 @@
           "attempt": 1,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 668,
-          "download_kbps": 443,
+          "latency_ms": 747,
+          "download_kbps": 659,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 668
+              "latency_ms": 747
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 659
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 166,
+          "download_kbps": 1011,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 166
             },
             {
               "stage": "B",
@@ -1619,7 +461,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 443
+              "kbps": 1011
             },
             {
               "stage": "D",
@@ -1629,11 +471,11 @@
           ]
         },
         {
-          "attempt": 2,
+          "attempt": 3,
           "ok": true,
           "reason": "all_layers_passed",
           "latency_ms": 105,
-          "download_kbps": 743,
+          "download_kbps": 877,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
@@ -1681,7 +523,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 743
+              "kbps": 877
             },
             {
               "stage": "D",
@@ -1689,57 +531,12 @@
               "ip": "45.15.128.75"
             }
           ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 95,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 95
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
         }
       ],
       "why_accepted": {
-        "stable_successes": "2/3",
+        "stable_successes": "3/3",
         "best_latency_ms": 105,
-        "best_download_kbps": 743,
+        "best_download_kbps": 877,
         "egress_ip": "45.15.128.75",
         "layer_trace": [
           {
@@ -1787,7 +584,7 @@
             "stage": "C",
             "ok": true,
             "bytes": 1048576,
-            "kbps": 743
+            "kbps": 877
           },
           {
             "stage": "D",
@@ -1801,15 +598,15 @@
       }
     },
     {
-      "index": 1,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---AliXTso---Join---AliXTso---Join---AliXTso---Join---AliXTso&headerType=none&fp=chrome&spx=/&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---AliXTso---Join---AliXTso---Join---AliXTso---Join---AliXTso&headerType=none&fp=chrome&spx=/&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "index": 12,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252525252F#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2525252525252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
       "status": "DEAD",
-      "latency_ms": null,
-      "download_kbps": 0,
-      "ip": "",
-      "classification": "provider_block_suspected",
-      "reason": "❌ unstable (1/3) stageH negative_probe_failed 0/2",
+      "latency_ms": 92,
+      "download_kbps": 832,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
       "remark": "🇵🇱 Poland [*CIDR]",
       "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
       "alpn": [],
@@ -1821,15 +618,15 @@
           "attempt": 1,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 693,
-          "download_kbps": 365,
+          "latency_ms": 677,
+          "download_kbps": 684,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 693
+              "latency_ms": 677
             },
             {
               "stage": "B",
@@ -1870,7 +667,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 365
+              "kbps": 684
             },
             {
               "stage": "D",
@@ -1881,11 +678,1354 @@
         },
         {
           "attempt": 2,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 109,
+          "download_kbps": 1060,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 109
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 1060
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 92,
+          "download_kbps": 832,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 92
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 832
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 92,
+        "best_download_kbps": 832,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 92
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 832
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 6,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%252525252Chttp%252525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 96,
+      "download_kbps": 1234,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [
+        "h2",
+        "http/1.1"
+      ],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 688,
+          "download_kbps": 603,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 688
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 603
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 96,
+          "download_kbps": 1234,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 96
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 1234
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 101,
+          "download_kbps": 866,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 101
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 866
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 96,
+        "best_download_kbps": 1234,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 96
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 1234
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 1,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---AliXTso---Join---AliXTso---Join---AliXTso---Join---AliXTso&headerType=none&fp=chrome&spx=/&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---AliXTso---Join---AliXTso---Join---AliXTso---Join---AliXTso&headerType=none&fp=chrome&spx=/&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 95,
+      "download_kbps": 682,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 726,
+          "download_kbps": 644,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 726
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 644
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 161,
+          "download_kbps": 1124,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 161
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 1124
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 95,
+          "download_kbps": 682,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 95
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 682
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 95,
+        "best_download_kbps": 682,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 95
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 682
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 2,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%252Chttp%252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2525252525252Chttp%2525252525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 105,
+      "download_kbps": 726,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [
+        "h2",
+        "http/1.1"
+      ],
+      "alpn_malformed": true,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 746,
+          "download_kbps": 663,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 746
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 663
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 118,
+          "download_kbps": 878,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 118
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 878
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 105,
+          "download_kbps": 726,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 105
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 726
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 105,
+        "best_download_kbps": 726,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 105
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 726
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 5,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2525252Chttp%2525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 97,
+      "download_kbps": 657,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [
+        "h2",
+        "http/1.1"
+      ],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 784,
+          "download_kbps": 553,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 784
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 553
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 100,
+          "download_kbps": 1048,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 100
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 1048
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 97,
+          "download_kbps": 657,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 97
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 657
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 97,
+        "best_download_kbps": 657,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 97
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 657
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 16,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?type=tcp&security=reality&encryption=none&flow=xtls-rprx-vision&fp=chrome&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&sni=max.ru&spx=/#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?type=tcp&security=reality&encryption=none&flow=xtls-rprx-vision&fp=chrome&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&sni=max.ru&spx=/#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 90,
+      "download_kbps": 733,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 634,
+          "download_kbps": 574,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 634
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 574
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
           "latency_ms": 104,
-          "download_kbps": 0,
-          "ip": "",
+          "download_kbps": 896,
+          "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
@@ -1921,86 +2061,39 @@
               "stage": "G",
               "ok": true,
               "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 896
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
             }
           ]
         },
         {
           "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 121,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 121
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "index": 14,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=/#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": null,
-      "download_kbps": 0,
-      "ip": "",
-      "classification": "provider_block_suspected",
-      "reason": "❌ unstable (1/3) stageH negative_probe_failed 0/2",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 694,
-          "download_kbps": 495,
+          "latency_ms": 90,
+          "download_kbps": 733,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 694
+              "latency_ms": 90
             },
             {
               "stage": "B",
@@ -2041,7 +2134,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 495
+              "kbps": 733
             },
             {
               "stage": "D",
@@ -2049,106 +2142,79 @@
               "ip": "45.15.128.75"
             }
           ]
-        },
-        {
-          "attempt": 2,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 98,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 98
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 234,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 234
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            }
-          ]
         }
-      ]
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 90,
+        "best_download_kbps": 733,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 90
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 733
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
     },
     {
-      "index": 4,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2Chttp%2F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%25252525252Chttp%25252525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "index": 3,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2Chttp%2F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
       "status": "DEAD",
-      "latency_ms": 103,
-      "download_kbps": 740,
+      "latency_ms": 90,
+      "download_kbps": 974,
       "ip": "45.15.128.75",
       "classification": "duplicate_egress_ip",
       "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
@@ -2166,19 +2232,19 @@
           "attempt": 1,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 685,
-          "download_kbps": 387,
+          "latency_ms": 732,
+          "download_kbps": 717,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 685
+              "latency_ms": 732
             },
             {
               "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "url": "https://api.ipify.org?format=json",
               "ok": true,
               "reason": "ok"
             },
@@ -2215,7 +2281,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 387
+              "kbps": 717
             },
             {
               "stage": "D",
@@ -2228,15 +2294,15 @@
           "attempt": 2,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 103,
-          "download_kbps": 740,
+          "latency_ms": 139,
+          "download_kbps": 1002,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 103
+              "latency_ms": 139
             },
             {
               "stage": "B",
@@ -2277,7 +2343,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 740
+              "kbps": 1002
             },
             {
               "stage": "D",
@@ -2288,17 +2354,17 @@
         },
         {
           "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 102,
-          "download_kbps": 0,
-          "ip": "",
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 90,
+          "download_kbps": 974,
+          "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 102
+              "latency_ms": 90
             },
             {
               "stage": "B",
@@ -2328,21 +2394,38 @@
               "stage": "G",
               "ok": true,
               "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 974
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
             }
           ]
         }
       ],
       "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 103,
-        "best_download_kbps": 740,
+        "stable_successes": "3/3",
+        "best_latency_ms": 90,
+        "best_download_kbps": 974,
         "egress_ip": "45.15.128.75",
         "layer_trace": [
           {
             "stage": "A",
             "url": "https://www.gstatic.com/generate_204",
             "ok": true,
-            "latency_ms": 103
+            "latency_ms": 90
           },
           {
             "stage": "B",
@@ -2383,7 +2466,7 @@
             "stage": "C",
             "ok": true,
             "bytes": 1048576,
-            "kbps": 740
+            "kbps": 974
           },
           {
             "stage": "D",
@@ -2401,8 +2484,8 @@
       "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=/#🇵🇱 Poland [*CIDR]",
       "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
       "status": "DEAD",
-      "latency_ms": 133,
-      "download_kbps": 672,
+      "latency_ms": 95,
+      "download_kbps": 828,
       "ip": "45.15.128.75",
       "classification": "duplicate_egress_ip",
       "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
@@ -2417,25 +2500,19 @@
           "attempt": 1,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 732,
-          "download_kbps": 387,
+          "latency_ms": 690,
+          "download_kbps": 679,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 732
+              "latency_ms": 690
             },
             {
               "stage": "B",
               "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
               "ok": true,
               "reason": "ok"
             },
@@ -2466,7 +2543,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 387
+              "kbps": 679
             },
             {
               "stage": "D",
@@ -2479,15 +2556,15 @@
           "attempt": 2,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 133,
-          "download_kbps": 672,
+          "latency_ms": 136,
+          "download_kbps": 930,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 133
+              "latency_ms": 136
             },
             {
               "stage": "B",
@@ -2528,7 +2605,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 672
+              "kbps": 930
             },
             {
               "stage": "D",
@@ -2539,17 +2616,17 @@
         },
         {
           "attempt": 3,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
-          "latency_ms": 151,
-          "download_kbps": 0,
-          "ip": "",
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 95,
+          "download_kbps": 828,
+          "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 151
+              "latency_ms": 95
             },
             {
               "stage": "B",
@@ -2579,21 +2656,38 @@
               "stage": "G",
               "ok": true,
               "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 828
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
             }
           ]
         }
       ],
       "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 133,
-        "best_download_kbps": 672,
+        "stable_successes": "3/3",
+        "best_latency_ms": 95,
+        "best_download_kbps": 828,
         "egress_ip": "45.15.128.75",
         "layer_trace": [
           {
             "stage": "A",
             "url": "https://www.gstatic.com/generate_204",
             "ok": true,
-            "latency_ms": 133
+            "latency_ms": 95
           },
           {
             "stage": "B",
@@ -2634,7 +2728,7 @@
             "stage": "C",
             "ok": true,
             "bytes": 1048576,
-            "kbps": 672
+            "kbps": 828
           },
           {
             "stage": "D",
@@ -2648,12 +2742,12 @@
       }
     },
     {
-      "index": 12,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252525252F#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2525252525252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "index": 7,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---i10VPN---Join---i10VPN---Join---i10VPN---Join---i10VPN&headerType=none&fp=chrome&spx=/&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&host=Join---i10VPN---Join---i10VPN---Join---i10VPN---Join---i10VPN&headerType=none&fp=chrome&spx=%2F&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
       "status": "DEAD",
-      "latency_ms": 89,
-      "download_kbps": 1034,
+      "latency_ms": 94,
+      "download_kbps": 826,
       "ip": "45.15.128.75",
       "classification": "duplicate_egress_ip",
       "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
@@ -2668,15 +2762,15 @@
           "attempt": 1,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 683,
-          "download_kbps": 176,
+          "latency_ms": 682,
+          "download_kbps": 695,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 683
+              "latency_ms": 682
             },
             {
               "stage": "B",
@@ -2717,7 +2811,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 176
+              "kbps": 695
             },
             {
               "stage": "D",
@@ -2730,7 +2824,278 @@
           "attempt": 2,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 91,
+          "latency_ms": 152,
+          "download_kbps": 1335,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 152
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 1335
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 94,
+          "download_kbps": 826,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 94
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 826
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 94,
+        "best_download_kbps": 826,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 94
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 826
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 8,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%25252Chttp%25252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 107,
+      "download_kbps": 1064,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [
+        "h2",
+        "http/1.1"
+      ],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 715,
+          "download_kbps": 656,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 715
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 656
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 118,
           "download_kbps": 1104,
           "ip": "45.15.128.75",
           "layer_trace": [
@@ -2738,7 +3103,7 @@
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 91
+              "latency_ms": 118
             },
             {
               "stage": "B",
@@ -2792,757 +3157,9 @@
           "attempt": 3,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 89,
-          "download_kbps": 1034,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 89
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 1034
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "3/3",
-        "best_latency_ms": 89,
-        "best_download_kbps": 1034,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 89
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 1034
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 13,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252F#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": 104,
-      "download_kbps": 913,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 647,
-          "download_kbps": 438,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 647
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 438
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 104,
-          "download_kbps": 913,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 104
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 913
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 120,
-          "download_kbps": 937,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 120
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 937
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "3/3",
-        "best_latency_ms": 104,
-        "best_download_kbps": 913,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 104
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 913
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 0,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%252Chttp%252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": 101,
-      "download_kbps": 880,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [
-        "h2",
-        "http/1.1"
-      ],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 720,
-          "download_kbps": 500,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 720
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 500
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 104,
-          "download_kbps": 909,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 104
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 909
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 3,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 101,
-          "download_kbps": 880,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 101
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 880
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "3/3",
-        "best_latency_ms": 101,
-        "best_download_kbps": 880,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 101
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 880
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 8,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2,http/1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%25252Chttp%25252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": 108,
-      "download_kbps": 868,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [
-        "h2",
-        "http/1.1"
-      ],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 1070,
-          "download_kbps": 476,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 1070
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=postman-echo.com"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 476
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": false,
-          "reason": "stageH negative_probe_failed 0/2",
           "latency_ms": 107,
-          "download_kbps": 0,
-          "ip": "",
+          "download_kbps": 1064,
+          "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
@@ -3578,6 +3195,223 @@
               "stage": "G",
               "ok": true,
               "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 1064
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 107,
+        "best_download_kbps": 1064,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 107
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 1064
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 9,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2525252F#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252525252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 107,
+      "download_kbps": 613,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 697,
+          "download_kbps": 657,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 697
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 657
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 112,
+          "download_kbps": 667,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 112
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 667
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
             }
           ]
         },
@@ -3585,8 +3419,747 @@
           "attempt": 3,
           "ok": true,
           "reason": "all_layers_passed",
+          "latency_ms": 107,
+          "download_kbps": 613,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 107
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 613
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 107,
+        "best_download_kbps": 613,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 107
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 613
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 14,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=/#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 98,
+      "download_kbps": 813,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 688,
+          "download_kbps": 703,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 688
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 703
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 99,
+          "download_kbps": 961,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 99
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 961
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 98,
+          "download_kbps": 813,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 98
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 813
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 98,
+        "best_download_kbps": 813,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 98
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 813
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 4,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%2Chttp%2F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&alpn=h2%25252525252Chttp%25252525252F1.1&encryption=none&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=max.ru&sid=e473bbc75224b9df#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 100,
+      "download_kbps": 691,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [
+        "h2",
+        "http/1.1"
+      ],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 689,
+          "download_kbps": 441,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 689
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 441
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 100,
+          "download_kbps": 691,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 100
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 691
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 3,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 140,
+          "download_kbps": 615,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 140
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.wikipedia.org/",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 615
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        }
+      ],
+      "why_accepted": {
+        "stable_successes": "3/3",
+        "best_latency_ms": 100,
+        "best_download_kbps": 691,
+        "egress_ip": "45.15.128.75",
+        "layer_trace": [
+          {
+            "stage": "A",
+            "url": "https://www.gstatic.com/generate_204",
+            "ok": true,
+            "latency_ms": 100
+          },
+          {
+            "stage": "B",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.wikipedia.org/",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://api.ipify.org?format=json",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "F",
+            "url": "https://www.cloudflare.com/cdn-cgi/trace",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "G",
+            "ok": true,
+            "reason": "nonce_ok host=httpbin.org"
+          },
+          {
+            "stage": "H",
+            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+            "ok": true,
+            "reason": "ok"
+          },
+          {
+            "stage": "C",
+            "ok": true,
+            "bytes": 1048576,
+            "kbps": 691
+          },
+          {
+            "stage": "D",
+            "ok": true,
+            "ip": "45.15.128.75"
+          }
+        ],
+        "nonce_probe": "nonce_ok host=httpbin.org",
+        "real_world_passed": 3,
+        "egress_geo": {}
+      }
+    },
+    {
+      "index": 11,
+      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%2F#🇵🇱 Poland [*CIDR]",
+      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?security=reality&flow=xtls-rprx-vision&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&fp=chrome&sni=max.ru&type=tcp&headerType=none&path=%25252525252F#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
+      "status": "DEAD",
+      "latency_ms": 101,
+      "download_kbps": 964,
+      "ip": "45.15.128.75",
+      "classification": "duplicate_egress_ip",
+      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
+      "remark": "🇵🇱 Poland [*CIDR]",
+      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "alpn": [],
+      "alpn_malformed": false,
+      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
+      "expected_server_ip": "45.15.128.75",
+      "attempt_runs": [
+        {
+          "attempt": 1,
+          "ok": true,
+          "reason": "all_layers_passed",
+          "latency_ms": 709,
+          "download_kbps": 590,
+          "ip": "45.15.128.75",
+          "layer_trace": [
+            {
+              "stage": "A",
+              "url": "https://www.gstatic.com/generate_204",
+              "ok": true,
+              "latency_ms": 709
+            },
+            {
+              "stage": "B",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://api.ipify.org?format=json",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "F",
+              "url": "https://www.cloudflare.com/cdn-cgi/trace",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "G",
+              "ok": true,
+              "reason": "nonce_ok host=httpbin.org"
+            },
+            {
+              "stage": "H",
+              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+              "ok": true,
+              "reason": "ok"
+            },
+            {
+              "stage": "C",
+              "ok": true,
+              "bytes": 1048576,
+              "kbps": 590
+            },
+            {
+              "stage": "D",
+              "ok": true,
+              "ip": "45.15.128.75"
+            }
+          ]
+        },
+        {
+          "attempt": 2,
+          "ok": true,
+          "reason": "all_layers_passed",
           "latency_ms": 108,
-          "download_kbps": 868,
+          "download_kbps": 943,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
@@ -3634,167 +4207,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 868
-            },
-            {
-              "stage": "D",
-              "ok": true,
-              "ip": "45.15.128.75"
-            }
-          ]
-        }
-      ],
-      "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 108,
-        "best_download_kbps": 868,
-        "egress_ip": "45.15.128.75",
-        "layer_trace": [
-          {
-            "stage": "A",
-            "url": "https://www.gstatic.com/generate_204",
-            "ok": true,
-            "latency_ms": 108
-          },
-          {
-            "stage": "B",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.wikipedia.org/",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://api.ipify.org?format=json",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "F",
-            "url": "https://www.cloudflare.com/cdn-cgi/trace",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "G",
-            "ok": true,
-            "reason": "nonce_ok host=httpbin.org"
-          },
-          {
-            "stage": "H",
-            "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-            "ok": true,
-            "reason": "ok"
-          },
-          {
-            "stage": "C",
-            "ok": true,
-            "bytes": 1048576,
-            "kbps": 868
-          },
-          {
-            "stage": "D",
-            "ok": true,
-            "ip": "45.15.128.75"
-          }
-        ],
-        "nonce_probe": "nonce_ok host=httpbin.org",
-        "real_world_passed": 3,
-        "egress_geo": {}
-      }
-    },
-    {
-      "index": 16,
-      "link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?type=tcp&security=reality&encryption=none&flow=xtls-rprx-vision&fp=chrome&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&sni=max.ru&spx=/#🇵🇱 Poland [*CIDR]",
-      "original_link": "vless://fad2b7e0-d80c-4b7b-a84f-d86e0e49f627@45.15.128.75:8443?type=tcp&security=reality&encryption=none&flow=xtls-rprx-vision&fp=chrome&pbk=BSsqyfTD-avgb1CyUdy_qJA95HwyMadBMJt7-EQjggk&sid=e473bbc75224b9df&sni=max.ru&spx=/#%F0%9F%87%B5%F0%9F%87%B1%20Poland%20%5B%2ACIDR%5D",
-      "status": "DEAD",
-      "latency_ms": 96,
-      "download_kbps": 1213,
-      "ip": "45.15.128.75",
-      "classification": "duplicate_egress_ip",
-      "reason": "❌ duplicate_egress_ip limit=1 ip=45.15.128.75",
-      "remark": "🇵🇱 Poland [*CIDR]",
-      "raw_uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "alpn": [],
-      "alpn_malformed": false,
-      "uuid": "fad2b7e0-d80c-4b7b-a84f-d86e0e49f627",
-      "expected_server_ip": "45.15.128.75",
-      "attempt_runs": [
-        {
-          "attempt": 1,
-          "ok": false,
-          "reason": "stageA ReadTimeout https://www.gstatic.com/generate_204",
-          "latency_ms": null,
-          "download_kbps": 0,
-          "ip": "",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": false,
-              "reason": "ReadTimeout"
-            }
-          ]
-        },
-        {
-          "attempt": 2,
-          "ok": true,
-          "reason": "all_layers_passed",
-          "latency_ms": 1979,
-          "download_kbps": 629,
-          "ip": "45.15.128.75",
-          "layer_trace": [
-            {
-              "stage": "A",
-              "url": "https://www.gstatic.com/generate_204",
-              "ok": true,
-              "latency_ms": 1979
-            },
-            {
-              "stage": "B",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.wikipedia.org/",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://api.ipify.org?format=json",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "F",
-              "url": "https://www.cloudflare.com/cdn-cgi/trace",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "G",
-              "ok": true,
-              "reason": "nonce_ok host=httpbin.org"
-            },
-            {
-              "stage": "H",
-              "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
-              "ok": true,
-              "reason": "ok"
-            },
-            {
-              "stage": "C",
-              "ok": true,
-              "bytes": 1048576,
-              "kbps": 629
+              "kbps": 943
             },
             {
               "stage": "D",
@@ -3807,15 +4220,15 @@
           "attempt": 3,
           "ok": true,
           "reason": "all_layers_passed",
-          "latency_ms": 96,
-          "download_kbps": 1213,
+          "latency_ms": 101,
+          "download_kbps": 964,
           "ip": "45.15.128.75",
           "layer_trace": [
             {
               "stage": "A",
               "url": "https://www.gstatic.com/generate_204",
               "ok": true,
-              "latency_ms": 96
+              "latency_ms": 101
             },
             {
               "stage": "B",
@@ -3856,7 +4269,7 @@
               "stage": "C",
               "ok": true,
               "bytes": 1048576,
-              "kbps": 1213
+              "kbps": 964
             },
             {
               "stage": "D",
@@ -3867,16 +4280,16 @@
         }
       ],
       "why_accepted": {
-        "stable_successes": "2/3",
-        "best_latency_ms": 96,
-        "best_download_kbps": 1213,
+        "stable_successes": "3/3",
+        "best_latency_ms": 101,
+        "best_download_kbps": 964,
         "egress_ip": "45.15.128.75",
         "layer_trace": [
           {
             "stage": "A",
             "url": "https://www.gstatic.com/generate_204",
             "ok": true,
-            "latency_ms": 96
+            "latency_ms": 101
           },
           {
             "stage": "B",
@@ -3917,7 +4330,7 @@
             "stage": "C",
             "ok": true,
             "bytes": 1048576,
-            "kbps": 1213
+            "kbps": 964
           },
           {
             "stage": "D",
