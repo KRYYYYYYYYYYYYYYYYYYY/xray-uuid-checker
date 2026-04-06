@@ -48,6 +48,11 @@
   "max_success_per_egress_ip": 1,
   "real_world_check_enabled": true,
   "real_world_min_success": 2,
+  "nonce_probe_enabled": true,
+  "nonce_probe_urls": [
+    "https://httpbin.org/anything/{nonce}?r={nonce}",
+    "https://postman-echo.com/get?nonce={nonce}"
+  ],
   "real_world_targets": [
     {
       "url": "https://www.wikipedia.org/",

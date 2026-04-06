@@ -316,6 +316,11 @@ REAL_WORLD_TARGETS = build_stage_b_targets(CFG.get("real_world_targets") or [
     },
 ])
 REAL_WORLD_MIN_SUCCESS = max(1, int(CFG.get("real_world_min_success", 2)))
+NONCE_PROBE_ENABLED = CFG.get("nonce_probe_enabled", True)
+NONCE_PROBE_URLS = CFG.get("nonce_probe_urls") or [
+    "https://httpbin.org/anything/{nonce}?r={nonce}",
+    "https://postman-echo.com/get?nonce={nonce}",
+]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
@@ -484,6 +489,35 @@ def check_target_via_proxy(target, proxies):
     return True, "ok"
 
 
+def nonce_probe_check(proxies):
+    nonce = uuidlib.uuid4().hex[:12]
+    for template in NONCE_PROBE_URLS:
+        try:
+            url = template.format(nonce=nonce)
+            r, _, err = do_request(url, proxies)
+            if err:
+                continue
+            if r.status_code != 200:
+                continue
+            final_host = urllib.parse.urlparse(r.url).hostname or ""
+            expected_host = urllib.parse.urlparse(url).hostname or ""
+            if expected_host and final_host and expected_host != final_host:
+                continue
+            payload = r.text or ""
+            if nonce in payload:
+                return True, f"nonce_ok host={final_host or expected_host}"
+            try:
+                data = r.json()
+            except Exception:
+                continue
+            serialized = json.dumps(data, ensure_ascii=False)
+            if nonce in serialized:
+                return True, f"nonce_ok_json host={final_host or expected_host}"
+        except Exception:
+            continue
+    return False, "nonce_probe_failed"
+
+
 def run_validation_layers(proxies):
     result = {
         "ok": False,
@@ -577,6 +611,14 @@ def run_validation_layers(proxies):
         result["real_world_passed"] = passed
     else:
         result["real_world_passed"] = 0
+
+    # Layer G: nonce echo integrity (anti-facade / anti-static-fallback)
+    if NONCE_PROBE_ENABLED:
+        nonce_ok, nonce_reason = nonce_probe_check(proxies)
+        if not nonce_ok:
+            result["reason"] = f"stageG {nonce_reason}"
+            return result
+        result["nonce_probe"] = nonce_reason
 
     # Layer C: sustained traffic test (>=1MB endpoint)
     try:
@@ -980,6 +1022,7 @@ def main():
         f"stage_a_all={L7_REQUIRE_STAGE_A_ALL}, "
         f"stage_b_enabled={L7_STAGE_B_ENABLED}({len(STAGE_B_TARGETS)} targets), "
         f"real_world={REAL_WORLD_CHECK_ENABLED}({REAL_WORLD_MIN_SUCCESS}/{len(REAL_WORLD_TARGETS)}), "
+        f"nonce_probe={NONCE_PROBE_ENABLED}, "
         f"mimic_dpi_delay={MIMIC_DPI_DELAY}, "
         f"network_emu={NET_EMU_ENABLED}\n"
     )
