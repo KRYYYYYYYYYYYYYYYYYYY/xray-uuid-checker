@@ -4,6 +4,7 @@ import time
 import socket
 import subprocess
 import urllib.parse
+import random
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
@@ -58,6 +59,9 @@ HANDSHAKE_LIMIT = CFG.get("max_handshake_ms", 1200)
 RECV_TIMEOUT = CFG.get("recv_timeout", 0.9)
 SLEEP_BETWEEN = CFG.get("between_attempts_sleep", 0.2)
 L7_TIMEOUT = CFG.get("l7_timeout_sec", max(2.5, RECV_TIMEOUT))
+MIMIC_DPI_DELAY = CFG.get("mimic_dpi_delay", False)
+MIMIC_DPI_DELAY_MIN = CFG.get("mimic_dpi_delay_min_sec", 0.08)
+MIMIC_DPI_DELAY_MAX = CFG.get("mimic_dpi_delay_max_sec", 0.22)
 
 WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
@@ -65,14 +69,16 @@ WHITELIST_URLS = [
     "https://raw.githubusercontent.com/KRYYYYYYYYYYYYYYYYYYY/xray-uuid-checker/refs/heads/main/Wl2.txt",
 ]
 
-# Stage A: connectivity (проверка, что канал реально живой)
+# Stage A: primary mobile-like check (по умолчанию gstatic, как самый показательный для РФ-кейса)
 STAGE_A_URLS = CFG.get("l7_stage_a_urls") or [
-    "https://connectivitycheck.gstatic.com/generate_204",
     "https://www.gstatic.com/generate_204",
+    "https://connectivitycheck.gstatic.com/generate_204",
 ]
 STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
+L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
 
-# Stage B: stricter test (контрольный endpoint + latency threshold)
+# Stage B: optional cross-check (по умолчанию выключен, чтобы не было "пропуска через google")
+L7_STAGE_B_ENABLED = CFG.get("l7_stage_b_enabled", False)
 STAGE_B_URLS = CFG.get("l7_stage_b_urls") or [
     "https://www.google.com/generate_204",
 ]
@@ -148,33 +154,47 @@ def wait_socks(port, timeout=5):
     return False, None
 
 def test_proxy(proxies):
-    stage_a_best_latency = None
-    stage_a_ok = False
+    stage_a_latencies = []
     stage_a_reason = "нет ответа stage A"
+    stage_a_ok_count = 0
 
     for url in STAGE_A_URLS:
+        if MIMIC_DPI_DELAY:
+            time.sleep(random.uniform(MIMIC_DPI_DELAY_MIN, MIMIC_DPI_DELAY_MAX))
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
 
             if r.status_code in STAGE_A_OK_STATUSES:
-                stage_a_ok = True
+                stage_a_ok_count += 1
+                stage_a_latencies.append(latency)
                 stage_a_reason = f"stageA {r.status_code} {url}"
-                if stage_a_best_latency is None or latency < stage_a_best_latency:
-                    stage_a_best_latency = latency
-                break
+                if not L7_REQUIRE_STAGE_A_ALL:
+                    break
+                continue
             stage_a_reason = f"stageA bad_status={r.status_code} {url}"
+            if L7_REQUIRE_STAGE_A_ALL:
+                return False, None, stage_a_reason
 
         except Exception as e:
             stage_a_reason = f"stageA {type(e).__name__} {url}"
+            if L7_REQUIRE_STAGE_A_ALL:
+                return False, None, stage_a_reason
             continue
 
-    if not stage_a_ok:
+    if stage_a_ok_count == 0:
         return False, None, stage_a_reason
+
+    stage_a_best_latency = min(stage_a_latencies) if stage_a_latencies else None
+
+    if not L7_STAGE_B_ENABLED:
+        return True, stage_a_best_latency, stage_a_reason
 
     stage_b_reason = "нет ответа stage B"
     for url in STAGE_B_URLS:
+        if MIMIC_DPI_DELAY:
+            time.sleep(random.uniform(MIMIC_DPI_DELAY_MIN, MIMIC_DPI_DELAY_MAX))
         try:
             t0 = time.time()
             r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
@@ -396,6 +416,12 @@ def main():
 
     print(f"🚀 всего: {len(links)}\n")
     print(f"⚙️ workers={MAX_WORKERS}, max_success={MAX_SUCCESS}\n")
+    print(
+        "🧪 L7 profile: "
+        f"stage_a_all={L7_REQUIRE_STAGE_A_ALL}, "
+        f"stage_b_enabled={L7_STAGE_B_ENABLED}, "
+        f"mimic_dpi_delay={MIMIC_DPI_DELAY}\n"
+    )
 
     with ThreadPoolExecutor(MAX_WORKERS) as ex:
         futures = {ex.submit(check_link, link, i): link for i, link in enumerate(links)}
