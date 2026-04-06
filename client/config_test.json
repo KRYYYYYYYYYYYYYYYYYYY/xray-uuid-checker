@@ -4,7 +4,7 @@
   "target_mtu": 1280,
   "probe_attempts": 3,
   "min_success": 1,
-  "l7_min_success": 1,
+  "l7_min_success": 2,
   "profile_preset": "mobile_strict",
   "reality_probe_attempts": 3,
   "reality_timeout": 2.0,
@@ -18,17 +18,21 @@
     "https://www.gstatic.com/generate_204",
     "https://connectivitycheck.gstatic.com/generate_204"
   ],
+  "stage_a_forbidden_server_markers": {
+    "www.gstatic.com": ["nginx"],
+    "www.google.com": ["nginx"]
+  },
   "l7_stage_b_urls": [],
   "l7_stage_b_targets": [
+    {
+      "url": "https://www.cloudflare.com/cdn-cgi/trace",
+      "ok_statuses": [200],
+      "expect_contains": ["ip=", "warp="]
+    },
     {
       "url": "https://api.ipify.org?format=json",
       "ok_statuses": [200],
       "expect_json_key": "ip"
-    },
-    {
-      "url": "https://www.cloudflare.com/cdn-cgi/trace",
-      "ok_statuses": [200],
-      "expect_contains": ["h=", "ip=", "ts="]
     }
   ],
   "hijack_guard_enabled": true,
@@ -48,6 +52,7 @@
   "stage_d_fail_open": false,
   "stage_d_retries": 3,
   "verify_ip_not_local": true,
+  "strict_egress_match_server_ip": true,
   "max_success_per_egress_ip": 1,
   "real_world_check_enabled": true,
   "real_world_min_success": 2,

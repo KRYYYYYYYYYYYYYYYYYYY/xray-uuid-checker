@@ -138,6 +138,8 @@ def build_stage_b_targets(raw_targets):
             "ok_statuses": item.get("ok_statuses", [200]),
             "expect_contains": item.get("expect_contains", []),
             "expect_json_key": item.get("expect_json_key", ""),
+            "expect_headers": item.get("expect_headers", {}),
+            "forbid_headers": item.get("forbid_headers", {}),
         })
     return targets
 
@@ -189,6 +191,36 @@ def parse_alpn_list(params):
             seen.add(p)
             deduped.append(p)
     return deduped, malformed
+
+
+def normalize_vless_link(link):
+    # Некоторые генераторы многократно %-кодируют query-параметры (особенно ALPN).
+    # Декодируем ограниченным числом раундов, чтобы не повредить ссылку бесконечным циклом.
+    current = (link or "").strip()
+    for _ in range(5):
+        decoded = urllib.parse.unquote(current)
+        if decoded == current:
+            break
+        current = decoded
+    return current
+
+
+def resolve_expected_server_ip(host):
+    if not host:
+        return ""
+    try:
+        return str(ipaddress.ip_address(host))
+    except ValueError:
+        pass
+    try:
+        infos = socket.getaddrinfo(host, None, proto=socket.IPPROTO_TCP)
+        for info in infos:
+            sockaddr = info[4]
+            if sockaddr and sockaddr[0]:
+                return str(sockaddr[0]).strip()
+    except Exception:
+        return ""
+    return ""
 
 
 def fetch_ip_info(ip):
@@ -270,6 +302,13 @@ STAGE_A_FALLBACK_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_fallback_urls") or 
 ])
 STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
 L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
+STAGE_A_FORBIDDEN_SERVER_MARKERS = {
+    str(k).lower(): [str(v).lower() for v in vals]
+    for k, vals in (CFG.get("stage_a_forbidden_server_markers") or {
+        "www.gstatic.com": ["nginx"],
+        "www.google.com": ["nginx"],
+    }).items()
+}
 
 # Stage B: anti-fallback cross-check (по умолчанию включен)
 L7_STAGE_B_ENABLED = CFG.get("l7_stage_b_enabled", True)
@@ -306,7 +345,8 @@ EXPECTED_ASN_PREFIXES = [
     str(x).strip().upper() for x in (CFG.get("expected_asn_prefixes") or []) if str(x).strip()
 ]
 STABILITY_ATTEMPTS = max(1, int(CFG.get("stability_attempts", 3)))
-STABILITY_MIN_SUCCESS = max(1, int(CFG.get("stability_min_success", 2)))
+LEGACY_L7_MIN_SUCCESS = CFG.get("l7_min_success")
+STABILITY_MIN_SUCCESS = max(1, int(CFG.get("stability_min_success", LEGACY_L7_MIN_SUCCESS or 2)))
 REAL_DOWNLOAD_URL = CFG.get("real_download_url", "https://speed.cloudflare.com/__down?bytes=1048576")
 REAL_DOWNLOAD_MIN_BYTES = int(CFG.get("real_download_min_bytes", 300 * 1024))
 REAL_DOWNLOAD_MIN_KBPS = int(CFG.get("real_download_min_kbps", 32))
@@ -355,6 +395,7 @@ HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
 HEADERS["User-Agent"] = CFG.get("mobile_header_profiles", [{}])[0].get("user_agent", "Mozilla/5.0")
 STRICT_SNI_WHITELIST = CFG.get("mobile_whitelist_strict", True)
 VERIFY_TLS_CERTS = CFG.get("verify_tls_certs", True)
+STRICT_EGRESS_MATCH_SERVER_IP = CFG.get("strict_egress_match_server_ip", True)
 
 # ================= GLOBAL =================
 
@@ -517,6 +558,16 @@ def check_target_via_proxy(target, proxies):
             return False, "bad_json"
         if expect_json_key not in data:
             return False, f"missing_json_key={expect_json_key}"
+    expect_headers = target.get("expect_headers") or {}
+    for header_name, expected_value in expect_headers.items():
+        actual = str(r.headers.get(header_name, "")).lower()
+        if str(expected_value).lower() not in actual:
+            return False, f"missing_header_marker={header_name}"
+    forbid_headers = target.get("forbid_headers") or {}
+    for header_name, forbidden_value in forbid_headers.items():
+        actual = str(r.headers.get(header_name, "")).lower()
+        if actual and str(forbidden_value).lower() in actual:
+            return False, f"forbidden_header_marker={header_name}"
     return True, "ok"
 
 
@@ -549,7 +600,7 @@ def nonce_probe_check(proxies):
     return False, "nonce_probe_failed"
 
 
-def run_validation_layers(proxies):
+def run_validation_layers(proxies, expected_server_ip=""):
     result = {
         "ok": False,
         "latency_ms": None,
@@ -582,6 +633,12 @@ def run_validation_layers(proxies):
                 if expected_host and final_host and expected_host != final_host:
                     result["layer_trace"].append({"stage": "A", "url": url, "ok": False, "reason": f"hijack {expected_host}->{final_host}"})
                     result["reason"] = f"stageA hijack {expected_host}->{final_host}"
+                    return result
+                server_header = str(r.headers.get("Server", "")).lower()
+                forbidden_markers = STAGE_A_FORBIDDEN_SERVER_MARKERS.get(expected_host.lower(), [])
+                if server_header and any(marker in server_header for marker in forbidden_markers):
+                    result["layer_trace"].append({"stage": "A", "url": url, "ok": False, "reason": "suspicious_server_header"})
+                    result["reason"] = f"stageA suspicious_server_header={server_header}"
                     return result
             stage_a_latencies.append(latency)
             result["layer_trace"].append({"stage": "A", "url": url, "ok": True, "latency_ms": int(latency)})
@@ -756,6 +813,12 @@ def run_validation_layers(proxies):
                 result["layer_trace"].append({"stage": "D", "ok": False, "reason": result["reason"]})
                 return result
 
+        if STRICT_EGRESS_MATCH_SERVER_IP and expected_server_ip and proxy_ip and proxy_ip != "unknown":
+            if proxy_ip != expected_server_ip:
+                result["reason"] = f"stageD ip_mismatch proxy={proxy_ip} expected={expected_server_ip}"
+                result["layer_trace"].append({"stage": "D", "ok": False, "reason": result["reason"]})
+                return result
+
         if VERIFY_EGRESS_IP and proxy_ip and proxy_ip != "unknown":
             direct_ip = get_local_egress_ip()
             if not direct_ip:
@@ -875,9 +938,11 @@ def check_link(link, idx):
     local_port = 20000 + (idx % 1000)
     temp_config = os.path.join(TEMP_DIR, f"cfg_{idx}.json")
     process = None
+    normalized_link = normalize_vless_link(link)
     metadata = {
         "index": idx,
-        "link": link,
+        "link": normalized_link,
+        "original_link": link,
         "status": "DEAD",
         "latency_ms": None,
         "download_kbps": 0,
@@ -888,7 +953,7 @@ def check_link(link, idx):
     }
 
     try:
-        parsed = urllib.parse.urlparse(link)
+        parsed = urllib.parse.urlparse(normalized_link)
 
         if parsed.scheme != "vless":
             metadata["reason"] = "❌ не VLESS"
@@ -910,6 +975,8 @@ def check_link(link, idx):
 
         uuid = normalize_uuid(raw_uuid)
         metadata["uuid"] = uuid
+        expected_server_ip = resolve_expected_server_ip(host)
+        metadata["expected_server_ip"] = expected_server_ip
 
         if not uuid or not host:
             metadata["reason"] = "❌ битый VLESS (нет uuid/host)"
@@ -970,7 +1037,7 @@ def check_link(link, idx):
         attempt_runs = []
         last_reason = "no_attempts"
         for attempt_idx in range(STABILITY_ATTEMPTS):
-            run = run_validation_layers(proxies)
+            run = run_validation_layers(proxies, expected_server_ip=expected_server_ip)
             attempt_runs.append({
                 "attempt": attempt_idx + 1,
                 "ok": run.get("ok", False),
