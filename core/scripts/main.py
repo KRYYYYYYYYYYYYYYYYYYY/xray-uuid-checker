@@ -72,7 +72,6 @@ NET_EMU_BASE_LATENCY_MS = NETWORK_EMULATION.get("base_latency_ms", 0)
 NET_EMU_JITTER_MS = NETWORK_EMULATION.get("jitter_ms", 0)
 NET_EMU_PACKET_LOSS = NETWORK_EMULATION.get("packet_loss_probability", 0.0)
 NET_EMU_BURST_DELAY_MS = NETWORK_EMULATION.get("burst_delay_ms", 0)
-NET_EMU_DROP_AFFECTS_VERDICT = NETWORK_EMULATION.get("drop_affects_verdict", False)
 
 WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
@@ -585,13 +584,6 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
-        alpn_raw = get_param(params, "alpn", "")
-        alpn_decoded = maybe_multi_unquote(alpn_raw)
-        if "%2" in alpn_decoded.lower():
-            metadata["reason"] = "❌ битый ALPN (многократное кодирование)"
-            metadata["classification"] = classify_result(False, metadata["reason"])
-            return False, metadata["reason"], metadata
-
         sni = get_param(params, "sni", "").lower()
 
         if not sni:
@@ -725,11 +717,8 @@ def save_report():
 
     with open(REPORT_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp_report, REPORT_FILE)
 
-    print(f"🧾 report: {REPORT_FILE} ({abs_report})")
+    print(f"🧾 report: {REPORT_FILE}")
 
 # ================= MAIN =================
 
