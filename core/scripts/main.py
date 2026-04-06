@@ -59,7 +59,11 @@ TEMP_DIR = resolve_repo_path(CFG.get("temp_dir", "temp_configs"))
 MAX_WORKERS = CFG.get("workers", 20)
 LEGACY_L7_MAX_CANDIDATES = CFG.get("l7_max_candidates")
 MAX_SUCCESS = CFG.get("max_success", CFG.get("max_valid_links", 200))
-MAX_SUCCESS_PER_EGRESS_IP = max(0, int(CFG.get("max_success_per_egress_ip", 1)))
+# Дедупликация по egress IP отключена намеренно:
+# один и тот же серверный egress может обслуживать несколько валидных UUID.
+MAX_SUCCESS_PER_EGRESS_IP = 0
+if int(CFG.get("max_success_per_egress_ip", 0)) > 0:
+    print("⚠️ max_success_per_egress_ip в конфиге игнорируется: блокировка по одинаковому IP отключена")
 
 if "max_success" not in CFG and "max_valid_links" not in CFG:
     if isinstance(LEGACY_L7_MAX_CANDIDATES, int) and LEGACY_L7_MAX_CANDIDATES > 2:
