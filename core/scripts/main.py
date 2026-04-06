@@ -44,8 +44,7 @@ WHITELIST_URLS = [
 
 # 👉 НОРМАЛЬНЫЕ L7 TEST URL (НЕ whitelist)
 TEST_URLS = [
-    "https://www.google.com/generate_204",
-    "https://connectivitycheck.gstatic.com/generate_204",
+    "https://www.gstatic.com/generate_204",
 ]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
