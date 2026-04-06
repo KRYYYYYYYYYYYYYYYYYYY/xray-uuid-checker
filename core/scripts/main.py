@@ -7,6 +7,7 @@ import urllib.parse
 import requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Lock
+from collections import Counter
 import urllib3
 
 # ================= LOAD CONFIG =================
@@ -45,6 +46,7 @@ MAX_LATENCY = CFG.get("max_latency_ms", 2000)
 HANDSHAKE_LIMIT = CFG.get("max_handshake_ms", 1200)
 RECV_TIMEOUT = CFG.get("recv_timeout", 0.9)
 SLEEP_BETWEEN = CFG.get("between_attempts_sleep", 0.2)
+L7_TIMEOUT = CFG.get("l7_timeout_sec", max(2.5, RECV_TIMEOUT))
 
 WHITELIST_URLS = [
     CFG.get("mobile_whitelist_domains_url"),
@@ -54,7 +56,11 @@ WHITELIST_URLS = [
 
 # L7 endpoint'ы (только проверка факта HTTP-доступа)
 TEST_URLS = CFG.get("l7_test_urls") or [
+    "http://1.1.1.1",
+    "http://cp.cloudflare.com/generate_204",
     "https://www.gstatic.com/generate_204",
+    "https://connectivitycheck.gstatic.com/generate_204",
+    "https://www.google.com/generate_204",
 ]
 
 HEADERS = CFG.get("mobile_header_profiles", [{}])[0].get("headers", {})
@@ -69,6 +75,7 @@ session.verify = False
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 success_count = 0
+fail_reasons = Counter()
 
 # ================= WHITELIST =================
 
@@ -126,27 +133,33 @@ def wait_socks(port, timeout=5):
     return False, None
 
 def test_proxy(proxies):
+    last_error = "нет ответа от test_url"
+
     for url in TEST_URLS:
         try:
             t0 = time.time()
-            r = session.get(url, proxies=proxies, timeout=RECV_TIMEOUT, headers=HEADERS)
+            r = session.get(url, proxies=proxies, timeout=L7_TIMEOUT, headers=HEADERS)
             latency = (time.time() - t0) * 1000
 
             if r.status_code:
-                return True, latency
+                return True, latency, f"{r.status_code} {url}"
+            last_error = f"empty_status {url}"
 
-        except:
+        except Exception as e:
+            last_error = f"{type(e).__name__} {url}"
             continue
 
-    return False, None
+    return False, None, last_error
 
 # ================= XRAY =================
 
 def generate_config(uuid, host, port, params, local_port):
     security = params.get('security', ['none'])[0]
     sni = params.get('sni', [''])[0]
+    net = params.get('type', ['tcp'])[0]
+    flow = params.get('flow', [''])[0]
 
-    stream_settings = {"network": "tcp", "security": security}
+    stream_settings = {"network": net, "security": security}
 
     if security == "reality":
         stream_settings["realitySettings"] = {
@@ -159,6 +172,18 @@ def generate_config(uuid, host, port, params, local_port):
 
     elif security == "tls":
         stream_settings["tlsSettings"] = {"serverName": sni}
+
+    if net == "ws":
+        stream_settings["wsSettings"] = {
+            "path": params.get('path', ['/'])[0] or "/",
+            "headers": {"Host": params.get('host', [''])[0]} if params.get('host', [''])[0] else {}
+        }
+    elif net == "grpc":
+        stream_settings["grpcSettings"] = {
+            "serviceName": params.get('serviceName', [''])[0],
+            "authority": params.get('authority', [''])[0],
+            "multiMode": params.get('mode', ['gun'])[0] == "multi",
+        }
 
     return {
         "log": {"loglevel": "none"},
@@ -175,7 +200,8 @@ def generate_config(uuid, host, port, params, local_port):
                     "port": int(port),
                     "users": [{
                         "id": uuid,
-                        "encryption": "none"
+                        "encryption": "none",
+                        **({"flow": flow} if flow else {})
                     }]
                 }]
             },
@@ -207,6 +233,9 @@ def check_link(link, idx):
         port = parsed.port or 443
         params = urllib.parse.parse_qs(parsed.query)
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
+
+        if not uuid or not host:
+            return False, "❌ битый VLESS (нет uuid/host)"
 
         sni = params.get('sni', [''])[0].lower()
 
@@ -246,17 +275,17 @@ def check_link(link, idx):
         }
 
         for _ in range(PROBE_ATTEMPTS):
-            ok, latency = test_proxy(proxies)
+            ok, latency, l7_reason = test_proxy(proxies)
 
             if ok:
                 if latency and latency > MAX_LATENCY:
                     return False, f"🐢 latency {int(latency)} ms"
 
-                return True, f"⚡ {int(latency)} ms"
+                return True, f"⚡ {int(latency)} ms ({l7_reason})"
 
             time.sleep(SLEEP_BETWEEN)
 
-        return False, "❌ не проходит L7"
+        return False, f"❌ не проходит L7 ({l7_reason})"
 
     except Exception as e:
         return False, f"💥 {str(e)[:60]}"
@@ -347,6 +376,12 @@ def main():
                 save(futures[f])
             else:
                 print(f"❌ {reason}")
+                fail_reasons[reason] += 1
+
+    if fail_reasons:
+        print("\n📉 ТОП причин отказа:")
+        for reason, count in fail_reasons.most_common(5):
+            print(f"  - {count}x {reason}")
 
     print(f"\n🎯 готово: {success_count}")
 
