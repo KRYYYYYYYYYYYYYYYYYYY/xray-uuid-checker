@@ -16,6 +16,7 @@
   "l7_stage_b_enabled": false,
   "l7_stage_a_urls": [
     "https://www.gstatic.com/generate_204",
+    "https://connectivitycheck.gstatic.com/generate_204"
   ],
   "mimic_dpi_delay_min_sec": 0.08,
   "mimic_dpi_delay_max_sec": 0.22,
@@ -23,9 +24,10 @@
   "batch_multiplier": 2,
   "max_parallel_per_host": 1,
   "max_check_duration_sec": 3600,
-  "max_latency_ms": 2000,
+  "max_latency_ms": 3000,
   "recv_timeout": 0.9,
-  "between_attempts_sleep": 0.2,
+  "between_attempts_sleep": 0.4,
+  "l7_timeout_sec": 4.0,
   "mobile_whitelist_enabled": true,
   "mobile_whitelist_fail_open": false,
   "mobile_whitelist_timeout_sec": 10,
