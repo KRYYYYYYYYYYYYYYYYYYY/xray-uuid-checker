@@ -55,5 +55,17 @@
       }
     }
   ],
-  "probe_paths": ["/generate_204"]
+  "probe_paths": [
+    "/generate_204"
+  ],
+  "xray_bin": "/usr/local/bin/xray",
+  "probe_url": "https://www.gstatic.com/generate_204",
+  "report_file": "results/report.json",
+  "network_emulation": {
+    "enabled": true,
+    "base_latency_ms": 40,
+    "jitter_ms": 25,
+    "packet_loss_probability": 0.03,
+    "burst_delay_ms": 120
+  }
 }
