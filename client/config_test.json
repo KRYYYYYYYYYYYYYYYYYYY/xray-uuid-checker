@@ -33,6 +33,7 @@
   ],
   "hijack_guard_enabled": true,
   "verify_egress_ip": true,
+  "verify_tls_certs": true,
   "reject_private_egress_ip": true,
   "ip_echo_url": "https://api64.ipify.org?format=json",
   "ip_echo_urls": [
@@ -40,8 +41,10 @@
     "https://api.ipify.org?format=json",
     "https://ifconfig.me/all.json"
   ],
-  "ip_region_url": "http://ip-api.com/json/{ip}?fields=status,country,countryCode,query",
+  "ip_region_url": "http://ip-api.com/json/{ip}?fields=status,country,countryCode,query,as,asname",
   "expected_country_codes": [],
+  "expected_asn_numbers": [],
+  "expected_asn_prefixes": [],
   "stage_d_fail_open": false,
   "stage_d_retries": 3,
   "verify_ip_not_local": true,
@@ -68,6 +71,28 @@
       "url": "https://www.cloudflare.com/cdn-cgi/trace",
       "ok_statuses": [200],
       "expect_contains": ["h=", "ip=", "ts="]
+    }
+  ],
+  "negative_probe_enabled": true,
+  "negative_probe_min_success": 1,
+  "negative_probe_targets": [
+    {
+      "url": "https://www.example.com/",
+      "ok_statuses": [
+        200
+      ],
+      "expect_contains": [
+        "example domain"
+      ]
+    },
+    {
+      "url": "https://www.gnu.org/licenses/gpl-3.0.txt",
+      "ok_statuses": [
+        200
+      ],
+      "expect_contains": [
+        "gnu general public license"
+      ]
     }
   ],
   "stability_attempts": 3,
