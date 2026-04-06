@@ -37,7 +37,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 # ================= WHITELIST =================
 
 def load_whitelist():
-    r = session.get(WHITELIST_URL, timeout=10)
+    r = session.get(WHITELIST_URLS, timeout=10)
     domains = [f"https://{d.strip()}" for d in r.text.splitlines() if d.strip()]
 
     if not domains:
