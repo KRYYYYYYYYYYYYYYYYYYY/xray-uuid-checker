@@ -183,6 +183,11 @@ def ensure_parent_dir(path):
 STAGE_A_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_urls") or [
     "https://www.gstatic.com/generate_204",
 ])
+STAGE_A_FALLBACK_ENABLED = CFG.get("l7_stage_a_fallback_enabled", True)
+STAGE_A_FALLBACK_URLS = sanitize_l7_urls(CFG.get("l7_stage_a_fallback_urls") or [
+    "https://www.msftconnecttest.com/connecttest.txt",
+    "https://cp.cloudflare.com/generate_204",
+])
 STAGE_A_OK_STATUSES = set(CFG.get("l7_stage_a_ok_statuses", [200, 204]))
 L7_REQUIRE_STAGE_A_ALL = CFG.get("l7_require_stage_a_all", True)
 
@@ -288,10 +293,23 @@ def get_param(params, key, default=""):
 
 def is_valid_uuid(value):
     try:
-        parsed = uuidlib.UUID(str(value))
-        return str(parsed) == str(value).lower()
+        uuidlib.UUID(str(value).strip())
+        return True
     except ValueError:
         return False
+
+
+def normalize_uuid(value):
+    if value is None:
+        return ""
+    candidate = maybe_multi_unquote(str(value)).strip()
+    if not candidate:
+        return ""
+    candidate = candidate.strip("{}")
+    try:
+        return str(uuidlib.UUID(candidate))
+    except ValueError:
+        return ""
 
 
 def emulate_network_conditions():
@@ -364,6 +382,24 @@ def run_validation_layers(proxies):
             result["reason"] = f"stageA {type(e).__name__} {url}"
             if L7_REQUIRE_STAGE_A_ALL:
                 return result
+
+    if not stage_a_latencies and STAGE_A_FALLBACK_ENABLED and STAGE_A_FALLBACK_URLS:
+        for url in STAGE_A_FALLBACK_URLS:
+            try:
+                r, latency, err = do_request(url, proxies)
+                if err:
+                    continue
+                if r.status_code not in STAGE_A_OK_STATUSES:
+                    continue
+                if HIJACK_GUARD_ENABLED:
+                    expected_host = urllib.parse.urlparse(url).hostname or ""
+                    final_host = urllib.parse.urlparse(r.url).hostname or ""
+                    if expected_host and final_host and expected_host != final_host:
+                        continue
+                stage_a_latencies.append(latency)
+                break
+            except Exception:
+                continue
 
     if not stage_a_latencies:
         result["reason"] = result["reason"] or "stageA no successful probes"
@@ -566,12 +602,15 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
-        uuid = parsed.username
+        raw_uuid = parsed.username
         host = parsed.hostname
         port = parsed.port or 443
         params = urllib.parse.parse_qs(parsed.query)
         remark = urllib.parse.unquote(parsed.fragment) if parsed.fragment else host
         metadata["remark"] = remark
+        metadata["raw_uuid"] = raw_uuid
+
+        uuid = normalize_uuid(raw_uuid)
         metadata["uuid"] = uuid
 
         if not uuid or not host:
@@ -579,7 +618,7 @@ def check_link(link, idx):
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
 
-        if not is_valid_uuid(uuid):
+        if not is_valid_uuid(raw_uuid):
             metadata["reason"] = "❌ невалидный UUID"
             metadata["classification"] = classify_result(False, metadata["reason"])
             return False, metadata["reason"], metadata
@@ -715,8 +754,10 @@ def save_report():
         "items": report_items,
     }
 
-    with open(REPORT_FILE, "w", encoding="utf-8") as f:
+    temp_report_file = f"{REPORT_FILE}.tmp"
+    with open(temp_report_file, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+    os.replace(temp_report_file, REPORT_FILE)
 
     print(f"🧾 report: {REPORT_FILE}")
 
@@ -774,7 +815,24 @@ def main():
                 print("🛑 лимит достигнут")
                 break
 
-            result = f.result()
+            try:
+                result = f.result()
+            except Exception as e:
+                reason = f"💥 future_error {type(e).__name__}"
+                print(f"❌ {reason}")
+                fail_reasons[reason] += 1
+                report_items.append({
+                    "index": -1,
+                    "link": futures[f],
+                    "status": "DEAD",
+                    "latency_ms": None,
+                    "download_kbps": 0,
+                    "ip": "",
+                    "classification": "unknown",
+                    "reason": reason,
+                    "remark": "",
+                })
+                continue
             if result is None:
                 continue
 
