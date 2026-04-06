@@ -12,6 +12,8 @@ jobs:
       contents: write  # Даем боту право пушить изменения в файлы
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Install Xray Core
         run: bash core/scripts/install_xray.sh
@@ -31,10 +33,13 @@ jobs:
         run: |
           git config --global user.name "UUID-Checker-Bot"
           git config --global user.email "bot@github.com"
+          # Синхронизируемся с remote перед подготовкой commit,
+          # чтобы избежать non-fast-forward в параллельных запусках.
+          git pull --rebase origin main || true
           git add results/valid.txt || true
           git add results/report.json || true
           # Пушим, если есть изменения в валидных ссылках или в отчете
           if ! git diff --cached --quiet; then
             git commit -m "Update scan results [skip ci]"
-            git push
+            git push origin HEAD:main || (git pull --rebase origin main && git push origin HEAD:main)
           fi
