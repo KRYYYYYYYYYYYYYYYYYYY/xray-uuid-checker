@@ -187,4 +187,266 @@
 2026/04/06 16:23:08.562536 [Debug] [3330649065] transport/internet: dialing to tcp:45.15.128.75:8443
 2026/04/06 16:23:08.961447 [Info] [2279358798] proxy/socks: client UDP connection from udp:127.0.0.1:58537
 2026/04/06 16:23:08.961616 [Info] [4262027675] proxy/socks: client UDP connection from udp:127.0.0.1:51673
-2026/04/
+
+
+далее другой лог тунелля
+
++0400 2026-04-06 20:45:27 INFO [2897650857 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:27 INFO [2897650857 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:27 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:27 INFO [448208418 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61924
++0400 2026-04-06 20:45:27 INFO [448208418 0ms] inbound/tun[tun-in]: inbound connection to 216.58.201.202:443
++0400 2026-04-06 20:45:27 INFO [448208418 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:27 INFO [448208418 3ms] outbound/socks[proxy]: outbound connection to 216.58.201.202:443
++0400 2026-04-06 20:45:27 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:27 INFO [3143828828 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61926
++0400 2026-04-06 20:45:27 INFO [3143828828 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:27 INFO [3143828828 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:27 INFO [3143828828 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:27 ERROR [4270079508 26.61s] connection: connection download closed: raw-read tcp 192.168.1.69:52999->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:27 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:27 INFO [1798016907 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61928
++0400 2026-04-06 20:45:27 INFO [1798016907 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:27 INFO [1798016907 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:27 INFO [1798016907 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [2038517828 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61930
++0400 2026-04-06 20:45:28 INFO [2038517828 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [2038517828 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [2038517828 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 ERROR [929328781 26.79s] connection: connection download closed: raw-read tcp 192.168.1.69:53000->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [2393742162 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61932
++0400 2026-04-06 20:45:28 INFO [2393742162 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [2393742162 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [2393742162 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 ERROR [4255992833 19.17s] connection: connection download closed: raw-read tcp 192.168.1.69:55419->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:28 ERROR [2949398593 19.17s] connection: connection download closed: raw-read tcp 192.168.1.69:55420->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [929275467 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61935
++0400 2026-04-06 20:45:28 INFO [929275467 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [1780003464 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61934
++0400 2026-04-06 20:45:28 INFO [1780003464 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [929275467 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [1780003464 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [1780003464 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [929275467 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:28 INFO [3022584117 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61938
++0400 2026-04-06 20:45:28 INFO [3022584117 0ms] inbound/tun[tun-in]: inbound connection to 192.178.25.3:443
++0400 2026-04-06 20:45:28 INFO [3022584117 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:28 INFO [3022584117 2ms] outbound/socks[proxy]: outbound connection to 192.178.25.3:443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [3868400016 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61940
++0400 2026-04-06 20:45:28 INFO [3868400016 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [3868400016 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [3868400016 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 ERROR [2216119307 27.58s] connection: connection download closed: raw-read tcp 192.168.1.69:52996->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:28 ERROR [243929713 27.58s] connection: connection download closed: raw-read tcp 192.168.1.69:52995->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [4095277510 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61943
++0400 2026-04-06 20:45:28 INFO [4095277510 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [3568867990 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:61942
++0400 2026-04-06 20:45:28 INFO [3568867990 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [3568867990 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [3568867990 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [4095277510 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [4095277510 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
++0400 2026-04-06 20:45:28 INFO [2597728023 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64142
++0400 2026-04-06 20:45:28 INFO [2597728023 0ms] inbound/tun[tun-in]: inbound connection to 162.159.61.3:443
++0400 2026-04-06 20:45:28 INFO [2597728023 1ms] router: found process path: C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
++0400 2026-04-06 20:45:28 INFO [2597728023 2ms] outbound/socks[proxy]: outbound connection to 162.159.61.3:443
++0400 2026-04-06 20:45:28 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [2661297306 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64144
++0400 2026-04-06 20:45:28 INFO [2661297306 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:28 INFO [2661297306 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:28 INFO [2661297306 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [1700628955 19.17s] connection: connection download closed: raw-read tcp 192.168.1.69:55428->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 ERROR [3543374924 19.17s] connection: connection download closed: raw-read tcp 192.168.1.69:55427->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1473922782 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64147
++0400 2026-04-06 20:45:29 INFO [1473922782 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [950529026 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64146
++0400 2026-04-06 20:45:29 INFO [950529026 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [950529026 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [950529026 2ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [1473922782 2ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1473922782 2ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [3954424493 27.95s] connection: connection download closed: raw-read tcp 192.168.1.69:53001->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [446363591 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64150
++0400 2026-04-06 20:45:29 INFO [446363591 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [446363591 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [446363591 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:29 INFO [4057845845 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64152
++0400 2026-04-06 20:45:29 INFO [4057845845 0ms] inbound/tun[tun-in]: inbound connection to 149.154.175.53:443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:29 INFO [4132027797 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64153
++0400 2026-04-06 20:45:29 INFO [4132027797 0ms] inbound/tun[tun-in]: inbound connection to 149.154.175.53:80
++0400 2026-04-06 20:45:29 INFO [4057845845 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:29 INFO [4057845845 2ms] outbound/socks[proxy]: outbound connection to 149.154.175.53:443
++0400 2026-04-06 20:45:29 INFO [4132027797 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:29 INFO [4132027797 1ms] outbound/socks[proxy]: outbound connection to 149.154.175.53:80
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [3202644166 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64156
++0400 2026-04-06 20:45:29 INFO [3202644166 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1185292366 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64157
++0400 2026-04-06 20:45:29 INFO [1185292366 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [3202644166 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [3202644166 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [1185292366 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1185292366 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [1493265519 19.18s] connection: connection download closed: raw-read tcp 192.168.1.69:55449->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [2368817880 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64160
++0400 2026-04-06 20:45:29 INFO [2368817880 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [2368817880 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [2368817880 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [3030375684 19.19s] connection: connection download closed: raw-read tcp 192.168.1.69:55447->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 ERROR [3467127541 19.19s] connection: connection download closed: raw-read tcp 192.168.1.69:55448->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1693501485 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64163
++0400 2026-04-06 20:45:29 INFO [1693501485 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [2759213038 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64162
++0400 2026-04-06 20:45:29 INFO [2759213038 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [1693501485 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1693501485 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [2759213038 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [2759213038 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [3207686076 19.22s] connection: connection download closed: raw-read tcp 192.168.1.69:55452->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1240307089 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64166
++0400 2026-04-06 20:45:29 INFO [1240307089 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [1240307089 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1240307089 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [3343703489 19.18s] connection: connection download closed: raw-read tcp 192.168.1.69:55454->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 ERROR [324229978 19.18s] connection: connection download closed: raw-read tcp 192.168.1.69:55460->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 ERROR [2543907226 19.18s] connection: connection download closed: raw-read tcp 192.168.1.69:55453->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [171041711 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64168
++0400 2026-04-06 20:45:29 INFO [171041711 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [3345038404 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64170
++0400 2026-04-06 20:45:29 INFO [3345038404 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [2177308539 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64169
++0400 2026-04-06 20:45:29 INFO [2177308539 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [171041711 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [171041711 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [3345038404 2ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [3345038404 2ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [2177308539 2ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [2177308539 2ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [3508623351 19.19s] connection: connection download closed: raw-read tcp 192.168.1.69:55461->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [3216402416 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64174
++0400 2026-04-06 20:45:29 INFO [3216402416 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [3216402416 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [3216402416 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:29 INFO [104374245 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64176
++0400 2026-04-06 20:45:29 INFO [104374245 0ms] inbound/tun[tun-in]: inbound connection to 142.251.38.110:443
++0400 2026-04-06 20:45:29 INFO [104374245 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:29 INFO [104374245 2ms] outbound/socks[proxy]: outbound connection to 142.251.38.110:443
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1076198420 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64178
++0400 2026-04-06 20:45:29 INFO [1076198420 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [1076198420 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [1076198420 5ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 ERROR [1279007960 19.29s] connection: connection download closed: raw-read tcp 192.168.1.69:55463->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:29 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [4110297657 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64180
++0400 2026-04-06 20:45:29 INFO [4110297657 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:29 INFO [4110297657 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:29 INFO [4110297657 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 ERROR [1225186933 19.18s] connection: connection download closed: raw-read tcp 192.168.1.69:55467->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:30 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [2552717451 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64182
++0400 2026-04-06 20:45:30 INFO [2552717451 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 INFO [2552717451 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [2552717451 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:30 INFO [4146006257 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64184
++0400 2026-04-06 20:45:30 INFO [4146006257 0ms] inbound/tun[tun-in]: inbound connection to 142.251.38.99:443
++0400 2026-04-06 20:45:30 INFO [4146006257 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:30 INFO [4146006257 3ms] outbound/socks[proxy]: outbound connection to 142.251.38.99:443
++0400 2026-04-06 20:45:30 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [401453542 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64186
++0400 2026-04-06 20:45:30 INFO [401453542 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 INFO [401453542 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [401453542 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 ERROR [1767886977 19.16s] connection: connection download closed: raw-read tcp 192.168.1.69:55475->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:30 ERROR [1047762765 19.16s] connection: connection download closed: raw-read tcp 192.168.1.69:55474->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:30 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [1141824495 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64189
++0400 2026-04-06 20:45:30 INFO [1141824495 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 INFO [3122405908 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64188
++0400 2026-04-06 20:45:30 INFO [3122405908 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 INFO [1141824495 2ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [1141824495 2ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:30 INFO [3122405908 2ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:30 INFO [3122405908 2ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:31 ERROR [3566367199 19.20s] connection: connection download closed: raw-read tcp 192.168.1.69:55479->45.15.128.75:8443: An existing connection was forcibly closed by the remote host.
++0400 2026-04-06 20:45:31 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:31 INFO [571413642 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64192
++0400 2026-04-06 20:45:31 INFO [571413642 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:31 INFO [571413642 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:31 INFO [571413642 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:31 INFO router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:31 INFO [1358590537 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64194
++0400 2026-04-06 20:45:31 INFO [1358590537 0ms] inbound/tun[tun-in]: inbound connection to 142.251.150.119:443
++0400 2026-04-06 20:45:31 INFO [1358590537 1ms] router: found process path: C:\Users\kryga\Downloads\AyuGram Desktop\AyuGram (2).exe
++0400 2026-04-06 20:45:31 INFO [1358590537 2ms] outbound/socks[proxy]: outbound connection to 142.251.150.119:443
++0400 2026-04-06 20:45:31 INFO router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:31 INFO [1144096363 0ms] inbound/tun[tun-in]: inbound connection from 172.18.0.1:64196
++0400 2026-04-06 20:45:31 INFO [1144096363 0ms] inbound/tun[tun-in]: inbound connection to 45.15.128.75:8443
++0400 2026-04-06 20:45:31 INFO [1144096363 1ms] router: found process path: C:\Program Files\FlyFrogLLC\Happ\core\xray.exe
++0400 2026-04-06 20:45:31 INFO [1144096363 1ms] outbound/direct[direct]: outbound connection to 45.15.128.75:8443
+
+
+далее еще другой лог 
+
+[06.04 20:44:35] [CORE]: Will perform speed test on 1 hosts.
+[06.04 20:44:43] [CORE]: Connecting to: Poland [*CIDR]
+[06.04 20:44:43] [ROUTING]: Pre-flight check: routing enabled=0
+[06.04 20:44:43] [CORE]: Setting XRAY_LOCATION_ASSET to: C:\Program Files\FlyFrogLLC\Happ\core\
+[06.04 20:44:43] [CORE]: core output: Xray 26.2.6 (Xray, Penetrates Everything.) 12ee51e (go1.25.7 windows/amd64);A unified platform for anti-censorship.
+[06.04 20:44:43] [CORE]: Setting XRAY_LOCATION_ASSET to: C:\Program Files\FlyFrogLLC\Happ\core\
+[06.04 20:44:43] [CORE]: Setting XRAY_LOCATION_ASSET to: C:\Program Files\FlyFrogLLC\Happ\core\
+[06.04 20:44:43] [UI]: [CONNECTION TIMING] Core startup: 71ms
+[06.04 20:44:43] [TUN]: Starting TUN - current state: tunState=false, createError=false, tunProcess=exists, createTryCount=0
+[06.04 20:44:44] [TUN]: Starting tun ...
+[06.04 20:44:44] [TUN]: Tun executable: C:\Program Files\FlyFrogLLC\Happ\tun\sing-box.exe
+[06.04 20:44:44] [TUN]: Config file: C:\Users\kryga\AppData\Local\Happ\config.json
+[06.04 20:44:44] [TUN]: Starting TUN process with elevated privileges via daemon
+[06.04 20:44:44] [TUN]: [DaemonManager] Starting process 'sing-box-tun' with executable: C:\Program Files\FlyFrogLLC\Happ\tun\sing-box.exe
+[06.04 20:44:44] [TUN]: [DaemonManager] Arguments: run -c C:\Users\kryga\AppData\Local\Happ\config.json --disable-color
+[06.04 20:44:44] [TUN]: [DaemonManager] Process 'sing-box-tun' started
+[06.04 20:44:44] [TUN]: [DaemonManager] Daemon response: {"message":"Process started successfully","request-id":"req_11521","status":"started","timestamp":"2026-04-06T20:44:44"}
+[06.04 20:44:44] [TUN]: [DaemonManager] Process started successfully
+[06.04 20:44:44] [TUN]: TUN process started via daemon
+[06.04 20:44:44] [TUN]: Waiting for interface creation (attempt 1/3)...
+[06.04 20:44:44] [TUN]: Tunnel interface created successfully (via daemon)
+[06.04 20:44:44] [TUN]: Wait finished - tunState: true, createError: false, elapsed: 564ms
+[06.04 20:44:44] [TUN]: Interface created successfully (GUID will be retrieved on-demand for cleanup)
+[06.04 20:44:44] [TUN]: Tun started up in 564ms
+[06.04 20:44:44] [TUN]: Tun mode enabled
+[06.04 20:44:44] [UI]: [CONNECTION TIMING] TUN startup: 618ms
+[06.04 20:44:44] [UI]: [CONNECTION TIMING] Total connection time: 689ms
+[06.04 20:46:15] [CORE]: [MWStopServer] Called with onlyCore=0, tunEnabled=1
+[06.04 20:46:15] [TUN]: [MWStopServer] Stopping TUN because onlyCore=0 and tunEnabled=1
+[06.04 20:46:15] [TUN]: Attempting to stop TUN via daemon
+[06.04 20:46:15] [TUN]: Sending stop request to daemon
+[06.04 20:46:15] [TUN]: [DaemonManager] Stopping process 'sing-box-tun'
+[06.04 20:46:15] [TUN]: [DaemonManager] Process stop initiated successfully
+[06.04 20:46:15] [TUN]: TUN stop requested via daemon
+[06.04 20:46:15] [TUN]: Tun mode disabled
+[06.04 20:46:15] [UI]: Core stopped successfully.
