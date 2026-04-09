@@ -15,7 +15,7 @@ with open(CONFIG_PATH, 'r') as f:
     config = json.load(f)
 
 RESULTS_FILE = "results/valid.txt"
-XRAY_BIN = "./core/xray"
+XRAY_BIN = "core/scripts/install_xray.sh"
 TEMP_CONFIG = "temp_config.json"
 
 
