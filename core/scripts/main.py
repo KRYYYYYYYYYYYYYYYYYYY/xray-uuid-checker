@@ -5,7 +5,7 @@ import time
 import requests
 
 # Конфигурация
-CONFIG_PATH = 'config_test.json'
+CONFIG_PATH = 'client/config_test.json'
 
 with open(CONFIG_PATH, 'r') as f:
     config = json.load(f)
