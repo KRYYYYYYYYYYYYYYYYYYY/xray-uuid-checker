@@ -26,6 +26,11 @@ jobs:
       - name: Install Deps
         run: pip install -r requirements.txt
 
+      - name: Install v2ray
+        run: |
+          curl -O https://githubusercontent.com
+          sudo bash install-release.sh
+
       - name: Run Deep Check
         run: python core/scripts/main.py  # Убрали scripts/, добавили core/scripts/
 
