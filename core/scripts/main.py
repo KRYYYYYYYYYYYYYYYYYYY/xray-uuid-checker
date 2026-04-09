@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 import requests
+import re
 
 # Конфигурация
 CONFIG_PATH = 'client/config_test.json'
@@ -15,13 +16,34 @@ XRAY_BIN = "./core/xray"
 TEMP_CONFIG = "temp_config.json"
 
 
+# =========================
+# SAVE RESULT
+# =========================
 def save_result(link):
     os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
     with open(RESULTS_FILE, "a", encoding="utf-8") as f:
         f.write(link + "\n")
 
 
-# ✅ БЕЗОПАСНЫЙ ПАРСЕР VLESS
+# =========================
+# RAW FETCH (NEW)
+# =========================
+def fetch_vless_from_url(url):
+    try:
+        r = requests.get(url, timeout=10)
+        text = r.text
+
+        # вытаскиваем все vless:// ссылки
+        return re.findall(r"vless://[^\s'\"]+", text)
+
+    except Exception as e:
+        print(f"[-] RAW FETCH ERROR: {url} -> {e}")
+        return []
+
+
+# =========================
+# SAFE PARSER
+# =========================
 def parse_vless(link):
     try:
         if not link.startswith("vless://"):
@@ -39,15 +61,15 @@ def parse_vless(link):
 
         host, port = address_part.split(":", 1)
 
-        if not uuid_part or not host or not port:
-            return None
-
         return uuid_part, host, port
 
     except Exception:
         return None
 
 
+# =========================
+# XRAY CONFIG
+# =========================
 def generate_xray_config(uuid, host, port):
     return {
         "log": {"loglevel": "none"},
@@ -89,11 +111,13 @@ def generate_xray_config(uuid, host, port):
     }
 
 
+# =========================
+# CHECK LINK
+# =========================
 def check_vless_link(link):
     process = None
 
     try:
-        # ✅ безопасный парсинг
         parsed = parse_vless(link)
 
         if not parsed:
@@ -102,11 +126,9 @@ def check_vless_link(link):
 
         uuid_part, host, port = parsed
 
-        # write config
         with open(TEMP_CONFIG, 'w') as f:
             json.dump(generate_xray_config(uuid_part, host, port), f)
 
-        # start xray
         process = subprocess.Popen(
             [XRAY_BIN, "run", "-c", TEMP_CONFIG],
             stdout=subprocess.DEVNULL,
@@ -116,10 +138,9 @@ def check_vless_link(link):
         time.sleep(3)
 
         if process.poll() is not None:
-            print(f"[-] Xray failed: {host}")
+            print(f"[-] XRAY FAIL: {host}")
             return False
 
-        # test proxy
         proxies = {
             'http': 'socks5h://127.0.0.1:10808',
             'https': 'socks5h://127.0.0.1:10808'
@@ -136,7 +157,7 @@ def check_vless_link(link):
             return True
 
     except Exception as e:
-        print(f"[-] Error: {e}")
+        print(f"[-] ERROR: {e}")
 
     finally:
         if process:
@@ -147,15 +168,37 @@ def check_vless_link(link):
     return False
 
 
+# =========================
+# MAIN
+# =========================
 if __name__ == "__main__":
     if not os.path.exists('targets.txt'):
         print("[!] targets.txt not found")
         exit(1)
 
     with open('targets.txt', 'r') as f:
-        links = f.read().splitlines()
+        lines = f.read().splitlines()
 
-    for link in links:
-        link = link.strip()
-        if link and check_vless_link(link):
+    all_links = []
+
+    for line in lines:
+        line = line.strip()
+
+        if not line:
+            continue
+
+        # ✔ RAW URL → вытаскиваем vless
+        if line.startswith("http://") or line.startswith("https://"):
+            print(f"[i] FETCH RAW: {line}")
+            all_links.extend(fetch_vless_from_url(line))
+            continue
+
+        # ✔ обычный vless
+        all_links.append(line)
+
+    # уникальные ссылки
+    all_links = list(set(all_links))
+
+    for link in all_links:
+        if check_vless_link(link):
             save_result(link)
