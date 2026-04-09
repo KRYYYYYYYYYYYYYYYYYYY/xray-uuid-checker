@@ -21,6 +21,33 @@ def save_result(link):
         f.write(link + "\n")
 
 
+# ✅ БЕЗОПАСНЫЙ ПАРСЕР VLESS
+def parse_vless(link):
+    try:
+        if not link.startswith("vless://"):
+            return None
+
+        payload = link.split("://", 1)[1].split("#")[0]
+
+        if "@" not in payload:
+            return None
+
+        uuid_part, address_part = payload.split("@", 1)
+
+        if ":" not in address_part:
+            return None
+
+        host, port = address_part.split(":", 1)
+
+        if not uuid_part or not host or not port:
+            return None
+
+        return uuid_part, host, port
+
+    except Exception:
+        return None
+
+
 def generate_xray_config(uuid, host, port):
     return {
         "log": {"loglevel": "none"},
@@ -66,10 +93,14 @@ def check_vless_link(link):
     process = None
 
     try:
-        # parse vless://uuid@host:port
-        payload = link.split("://")[1].split("#")[0]
-        uuid_part, address_part = payload.split("@")
-        host, port = address_part.split(":")[0], address_part.split(":")[1]
+        # ✅ безопасный парсинг
+        parsed = parse_vless(link)
+
+        if not parsed:
+            print(f"[-] BAD LINK: {link}")
+            return False
+
+        uuid_part, host, port = parsed
 
         # write config
         with open(TEMP_CONFIG, 'w') as f:
