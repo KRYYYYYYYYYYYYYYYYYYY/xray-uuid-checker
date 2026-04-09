@@ -6,27 +6,47 @@ import requests
 import re
 from urllib.parse import urlparse, parse_qs
 from concurrent.futures import ThreadPoolExecutor
+import uuid
 
 # =========================
 # CONFIG
 # =========================
 RESULTS_FILE = "results/valid.txt"
-TEMP_CONFIG = "client/temp_config.json"
+TEMP_DIR = "client/tmp"
 XRAY_BIN = "core/xray"
 SOCKS_PORT = 10808
 
+TG_BOT_TOKEN = ""   # optional
+TG_CHAT_ID = ""     # optional
+
 
 # =========================
-# SAVE
+# SAFE INIT
+# =========================
+os.makedirs("results", exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+
+# =========================
+# CHECK XRAY BIN EXISTS
+# =========================
+if not os.path.exists(XRAY_BIN):
+    raise FileNotFoundError(
+        f"[XRAY NOT FOUND] Path '{XRAY_BIN}' does not exist. "
+        f"Fix it to your real xray binary location."
+    )
+
+
+# =========================
+# SAVE RESULT
 # =========================
 def save_result(link):
-    os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
     with open(RESULTS_FILE, "a", encoding="utf-8") as f:
         f.write(link + "\n")
 
 
 # =========================
-# FETCH RAW
+# FETCH
 # =========================
 def fetch_vless(url):
     try:
@@ -37,7 +57,7 @@ def fetch_vless(url):
 
 
 # =========================
-# ULTRA PARSER
+# PARSER
 # =========================
 def parse_vless(link):
     try:
@@ -45,12 +65,10 @@ def parse_vless(link):
             return None
 
         raw = link[8:]
-
         if "@" not in raw:
             return None
 
         user, rest = raw.split("@", 1)
-
         host_port = rest.split("?")[0]
         host, port = host_port.split(":")
         port = int(port)
@@ -70,7 +88,7 @@ def parse_vless(link):
 
 
 # =========================
-# XRAY BUILDER (ULTRA)
+# XRAY CONFIG
 # =========================
 def build_config(d):
     params = d["params"]
@@ -83,19 +101,16 @@ def build_config(d):
         "security": security
     }
 
-    # WS
     if network == "ws":
         stream["wsSettings"] = {
             "path": params.get("path", [""])[0]
         }
 
-    # GRPC
     if network == "grpc":
         stream["grpcSettings"] = {
             "serviceName": params.get("serviceName", [""])[0]
         }
 
-    # REALITY (best-effort)
     if security == "reality":
         stream["realitySettings"] = {
             "serverName": params.get("sni", [""])[0],
@@ -131,7 +146,27 @@ def build_config(d):
 
 
 # =========================
-# CHECK NODE (ULTRA)
+# WAIT SOCKS READY
+# =========================
+def wait_socks(timeout=6):
+    for _ in range(timeout * 5):
+        try:
+            requests.get(
+                "http://www.gstatic.com/generate_204",
+                proxies={
+                    "http": f"socks5h://127.0.0.1:{SOCKS_PORT}",
+                    "https": f"socks5h://127.0.0.1:{SOCKS_PORT}"
+                },
+                timeout=2
+            )
+            return True
+        except:
+            time.sleep(0.2)
+    return False
+
+
+# =========================
+# CHECK NODE
 # =========================
 def check(link):
     d = parse_vless(link)
@@ -139,30 +174,27 @@ def check(link):
         return False
 
     process = None
+    cfg_path = os.path.join(TEMP_DIR, f"{uuid.uuid4().hex}.json")
 
     try:
-        with open(TEMP_CONFIG, "w") as f:
+        with open(cfg_path, "w") as f:
             json.dump(build_config(d), f)
 
         process = subprocess.Popen(
-            [XRAY_BIN, "run", "-c", TEMP_CONFIG],
+            [XRAY_BIN, "run", "-c", cfg_path],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
 
-        time.sleep(2.5)
-
-        if process.poll() is not None:
+        if not wait_socks():
             return False
-
-        proxies = {
-            "http": f"socks5h://127.0.0.1:{SOCKS_PORT}",
-            "https": f"socks5h://127.0.0.1:{SOCKS_PORT}"
-        }
 
         r = requests.get(
             "http://www.gstatic.com/generate_204",
-            proxies=proxies,
+            proxies={
+                "http": f"socks5h://127.0.0.1:{SOCKS_PORT}",
+                "https": f"socks5h://127.0.0.1:{SOCKS_PORT}"
+            },
             timeout=6
         )
 
@@ -174,8 +206,27 @@ def check(link):
     finally:
         if process:
             process.terminate()
-        if os.path.exists(TEMP_CONFIG):
-            os.remove(TEMP_CONFIG)
+        if os.path.exists(cfg_path):
+            try:
+                os.remove(cfg_path)
+            except:
+                pass
+
+
+# =========================
+# TELEGRAM (OPTIONAL ULTRA MODE)
+# =========================
+def tg_send(text):
+    if not TG_BOT_TOKEN or not TG_CHAT_ID:
+        return
+    try:
+        requests.post(
+            f"https://api.telegram.org/bot{TG_BOT_TOKEN}/sendMessage",
+            json={"chat_id": TG_CHAT_ID, "text": text},
+            timeout=5
+        )
+    except:
+        pass
 
 
 # =========================
@@ -196,7 +247,8 @@ if __name__ == "__main__":
 
     links = list(set(links))
 
-    # 🔥 ULTRA SPEED
+    print(f"[ULTRA] TOTAL LINKS: {len(links)}")
+
     with ThreadPoolExecutor(max_workers=15) as ex:
         results = list(ex.map(check, links))
 
@@ -204,3 +256,4 @@ if __name__ == "__main__":
         if ok:
             print("[+] LIVE:", link)
             save_result(link)
+            tg_send(f"LIVE NODE:\n{link}")
