@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 # CONFIG
 # =========================
 RESULTS_FILE = "results/valid.txt"
-TEMP_CONFIG = "temp_config.json"
+TEMP_CONFIG = "client/temp_config.json"
 XRAY_BIN = "core/xray"
 SOCKS_PORT = 10808
 
