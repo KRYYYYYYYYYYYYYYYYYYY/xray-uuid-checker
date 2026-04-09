@@ -4,23 +4,20 @@ import subprocess
 import time
 import requests
 import re
-
+from urllib.parse import urlparse, parse_qs
+from concurrent.futures import ThreadPoolExecutor
 
 # =========================
 # CONFIG
 # =========================
-CONFIG_PATH = 'client/config_test.json'
-
-with open(CONFIG_PATH, 'r') as f:
-    config = json.load(f)
-
 RESULTS_FILE = "results/valid.txt"
-XRAY_BIN = "core/scripts/install_xray.sh"
 TEMP_CONFIG = "temp_config.json"
+XRAY_BIN = "core/xray"
+SOCKS_PORT = 10808
 
 
 # =========================
-# SAVE RESULT
+# SAVE
 # =========================
 def save_result(link):
     os.makedirs(os.path.dirname(RESULTS_FILE), exist_ok=True)
@@ -29,116 +26,123 @@ def save_result(link):
 
 
 # =========================
-# RAW FETCH (IMPROVED)
+# FETCH RAW
 # =========================
-def fetch_vless_from_url(url):
+def fetch_vless(url):
     try:
         r = requests.get(url, timeout=15)
-        text = r.text
-
-        # более умный regex (останавливается на пробелах/кавычках/скобках)
-        links = re.findall(r"vless://[^\s\"'<>()]+", text)
-
-        return links
-
-    except Exception as e:
-        print(f"[-] RAW FETCH ERROR: {url} -> {e}")
+        return re.findall(r"vless://[^\s\"'<>()]+", r.text)
+    except:
         return []
 
 
 # =========================
-# SAFE PARSER (FIXED)
+# ULTRA PARSER
 # =========================
 def parse_vless(link):
     try:
-        if not link or not link.startswith("vless://"):
+        if not link.startswith("vless://"):
             return None
 
-        payload = link[8:].split("#")[0]
+        raw = link[8:]
 
-        if "@" not in payload:
+        if "@" not in raw:
             return None
 
-        uuid_part, address_part = payload.split("@", 1)
+        user, rest = raw.split("@", 1)
 
-        if ":" not in address_part:
-            return None
+        host_port = rest.split("?")[0]
+        host, port = host_port.split(":")
+        port = int(port)
 
-        host, port = address_part.split(":", 1)
+        parsed_url = urlparse(link)
+        params = parse_qs(parsed_url.query)
 
-        # убираем ?params если вдруг остались
-        port = port.split("?")[0]
+        return {
+            "uuid": user,
+            "host": host,
+            "port": port,
+            "params": params
+        }
 
-        if not port.isdigit():
-            return None
-
-        return uuid_part, host, port
-
-    except Exception:
+    except:
         return None
 
 
 # =========================
-# XRAY CONFIG
+# XRAY BUILDER (ULTRA)
 # =========================
-def generate_xray_config(uuid, host, port):
+def build_config(d):
+    params = d["params"]
+
+    network = params.get("type", ["tcp"])[0]
+    security = params.get("security", ["none"])[0]
+
+    stream = {
+        "network": network,
+        "security": security
+    }
+
+    # WS
+    if network == "ws":
+        stream["wsSettings"] = {
+            "path": params.get("path", [""])[0]
+        }
+
+    # GRPC
+    if network == "grpc":
+        stream["grpcSettings"] = {
+            "serviceName": params.get("serviceName", [""])[0]
+        }
+
+    # REALITY (best-effort)
+    if security == "reality":
+        stream["realitySettings"] = {
+            "serverName": params.get("sni", [""])[0],
+            "fingerprint": "chrome"
+        }
+
     return {
         "log": {"loglevel": "none"},
-        "inbounds": [
-            {
-                "port": 10808,
-                "listen": "127.0.0.1",
-                "protocol": "socks",
-                "settings": {"udp": True}
-            }
-        ],
-        "outbounds": [
-            {
-                "protocol": "vless",
-                "settings": {
-                    "vnext": [
-                        {
-                            "address": host,
-                            "port": int(port),
-                            "users": [
-                                {
-                                    "id": uuid,
-                                    "encryption": "none"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                "streamSettings": {
-                    "network": "tcp",
-                    "security": "none"
-                }
+        "inbounds": [{
+            "port": SOCKS_PORT,
+            "listen": "127.0.0.1",
+            "protocol": "socks",
+            "settings": {"udp": True}
+        }],
+        "outbounds": [{
+            "protocol": "vless",
+            "settings": {
+                "vnext": [{
+                    "address": d["host"],
+                    "port": d["port"],
+                    "users": [{
+                        "id": d["uuid"],
+                        "encryption": "none"
+                    }]
+                }]
             },
-            {
-                "protocol": "freedom",
-                "tag": "direct"
-            }
-        ]
+            "streamSettings": stream
+        }, {
+            "protocol": "freedom",
+            "tag": "direct"
+        }]
     }
 
 
 # =========================
-# CHECK LINK
+# CHECK NODE (ULTRA)
 # =========================
-def check_vless_link(link):
+def check(link):
+    d = parse_vless(link)
+    if not d:
+        return False
+
     process = None
 
     try:
-        parsed = parse_vless(link)
-
-        if not parsed:
-            print(f"[-] BAD LINK: {link}")
-            return False
-
-        uuid_part, host, port = parsed
-
-        with open(TEMP_CONFIG, 'w') as f:
-            json.dump(generate_xray_config(uuid_part, host, port), f)
+        with open(TEMP_CONFIG, "w") as f:
+            json.dump(build_config(d), f)
 
         process = subprocess.Popen(
             [XRAY_BIN, "run", "-c", TEMP_CONFIG],
@@ -146,29 +150,26 @@ def check_vless_link(link):
             stderr=subprocess.DEVNULL
         )
 
-        time.sleep(3)
+        time.sleep(2.5)
 
         if process.poll() is not None:
-            print(f"[-] XRAY FAIL: {host}")
             return False
 
         proxies = {
-            'http': 'socks5h://127.0.0.1:10808',
-            'https': 'socks5h://127.0.0.1:10808'
+            "http": f"socks5h://127.0.0.1:{SOCKS_PORT}",
+            "https": f"socks5h://127.0.0.1:{SOCKS_PORT}"
         }
 
-        resp = requests.get(
+        r = requests.get(
             "http://www.gstatic.com/generate_204",
             proxies=proxies,
-            timeout=8
+            timeout=6
         )
 
-        if resp.status_code in [200, 204]:
-            print(f"[+] WORKING: {host}")
-            return True
+        return r.status_code in (200, 204)
 
-    except Exception as e:
-        print(f"[-] ERROR: {e}")
+    except:
+        return False
 
     finally:
         if process:
@@ -176,46 +177,30 @@ def check_vless_link(link):
         if os.path.exists(TEMP_CONFIG):
             os.remove(TEMP_CONFIG)
 
-    return False
-
 
 # =========================
 # MAIN
 # =========================
 if __name__ == "__main__":
-    if not os.path.exists('targets.txt'):
-        print("[!] targets.txt not found")
-        exit(1)
 
-    with open('targets.txt', 'r') as f:
-        lines = f.read().splitlines()
+    with open("targets.txt") as f:
+        lines = [x.strip() for x in f if x.strip()]
 
-    all_links = []
+    links = []
 
-    for line in lines:
-        line = line.strip()
+    for l in lines:
+        if l.startswith("http"):
+            links += fetch_vless(l)
+        else:
+            links.append(l)
 
-        if not line:
-            continue
+    links = list(set(links))
 
-        # RAW URL
-        if line.startswith("http://") or line.startswith("https://"):
-            print(f"[i] FETCH RAW: {line}")
-            all_links.extend(fetch_vless_from_url(line))
-            continue
+    # 🔥 ULTRA SPEED
+    with ThreadPoolExecutor(max_workers=15) as ex:
+        results = list(ex.map(check, links))
 
-        # VLESS link
-        all_links.append(line)
-
-    # cleanup + unique
-    cleaned = []
-    seen = set()
-
-    for link in all_links:
-        if link not in seen:
-            seen.add(link)
-            cleaned.append(link)
-
-    for link in cleaned:
-        if check_vless_link(link):
+    for link, ok in zip(links, results):
+        if ok:
+            print("[+] LIVE:", link)
             save_result(link)
