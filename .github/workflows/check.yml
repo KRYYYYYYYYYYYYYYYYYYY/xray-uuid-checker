@@ -16,7 +16,11 @@ jobs:
           fetch-depth: 0
       
       - name: Install Xray Core
-        run: bash core/scripts/install_xray.sh
+        run: |
+          mkdir -p core
+          curl -L -o xray.zip https://github.com/XTLS/Xray-core/releases/latest/download/Xray-linux-64.zip
+          unzip xray.zip -d core
+          chmod +x core/xray
 
       - name: Set up Python
         uses: actions/setup-python@v4
