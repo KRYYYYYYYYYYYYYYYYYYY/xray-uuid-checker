@@ -5,7 +5,10 @@ import time
 import requests
 import re
 
-# Конфигурация
+
+# =========================
+# CONFIG
+# =========================
 CONFIG_PATH = 'client/config_test.json'
 
 with open(CONFIG_PATH, 'r') as f:
@@ -26,15 +29,17 @@ def save_result(link):
 
 
 # =========================
-# RAW FETCH (NEW)
+# RAW FETCH (IMPROVED)
 # =========================
 def fetch_vless_from_url(url):
     try:
-        r = requests.get(url, timeout=10)
+        r = requests.get(url, timeout=15)
         text = r.text
 
-        # вытаскиваем все vless:// ссылки
-        return re.findall(r"vless://[^\s'\"]+", text)
+        # более умный regex (останавливается на пробелах/кавычках/скобках)
+        links = re.findall(r"vless://[^\s\"'<>()]+", text)
+
+        return links
 
     except Exception as e:
         print(f"[-] RAW FETCH ERROR: {url} -> {e}")
@@ -42,14 +47,14 @@ def fetch_vless_from_url(url):
 
 
 # =========================
-# SAFE PARSER
+# SAFE PARSER (FIXED)
 # =========================
 def parse_vless(link):
     try:
-        if not link.startswith("vless://"):
+        if not link or not link.startswith("vless://"):
             return None
 
-        payload = link.split("://", 1)[1].split("#")[0]
+        payload = link[8:].split("#")[0]
 
         if "@" not in payload:
             return None
@@ -60,6 +65,12 @@ def parse_vless(link):
             return None
 
         host, port = address_part.split(":", 1)
+
+        # убираем ?params если вдруг остались
+        port = port.split("?")[0]
+
+        if not port.isdigit():
+            return None
 
         return uuid_part, host, port
 
@@ -187,18 +198,24 @@ if __name__ == "__main__":
         if not line:
             continue
 
-        # ✔ RAW URL → вытаскиваем vless
+        # RAW URL
         if line.startswith("http://") or line.startswith("https://"):
             print(f"[i] FETCH RAW: {line}")
             all_links.extend(fetch_vless_from_url(line))
             continue
 
-        # ✔ обычный vless
+        # VLESS link
         all_links.append(line)
 
-    # уникальные ссылки
-    all_links = list(set(all_links))
+    # cleanup + unique
+    cleaned = []
+    seen = set()
 
     for link in all_links:
+        if link not in seen:
+            seen.add(link)
+            cleaned.append(link)
+
+    for link in cleaned:
         if check_vless_link(link):
             save_result(link)
