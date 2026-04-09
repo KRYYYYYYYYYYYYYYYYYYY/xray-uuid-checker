@@ -26,11 +26,15 @@ jobs:
       - name: Install Deps
         run: pip install -r requirements.txt
 
-      - name: Setup v2ray
-        uses: wangsijie/setup-v2ray@v1
-        with:
-    # Здесь можно указать версию, если нужно
-          v2ray-version: 'latest'
+      - name: Install V2Ray
+        run: |
+          for i in 1 2 3; do
+            curl -fL https://github.com/v2fly/v2ray-core/releases/latest/download/v2ray-linux-64.zip -o v2ray.zip && break
+            sleep 2
+          done
+          unzip -o v2ray.zip -d v2ray
+          sudo mv v2ray/v2ray /usr/local/bin/
+          sudo chmod +x /usr/local/bin/v2ray
 
       - name: Run Deep Check
         run: python core/scripts/main.py  # Убрали scripts/, добавили core/scripts/
