@@ -10483,3 +10483,4 @@ vless://4649d681-7f26-4959-a3f2-02eb8866230f@45.150.109.26:9443?flow=xtls-rprx-v
 vless://3d243df5-9cda-4aac-89d5-354de77d79e2@84.201.4.56:2053?encryption=none&type=grpc&security=tls&mode=gun&serviceName=grpc&sni=nice.ducks.tel#%F0%9F%87%A9%F0%9F%87%AAОбходы
 vless://87e69b82-5cd7-44dd-8eb3-8603a6764329@176.124.211.23:8446?flow=xtls-rprx-vision&encryption=none&type=tcp&security=reality&fp=qq&sni=jobinvest.ru&pbk=SbVKOEMjK0sIlbwg4akyBg5mL5KZwwB-ed4eEE7YnRc#%F0%9F%87%B3%F0%9F%87%B1Обходы
 vless://75807638-6f19-07d0-ae08-38492ee85c88@82.202.197.3:52006?flow=xtls-rprx-vision&encryption=none&type=tcp&security=tls&sni=cluster-russia-1.firstvideocdn.ru#%F0%9F%87%B7%F0%9F%87%BAОбходы
+vless://e1feeedf-a5ac-45aa-8679-e6b288dc78f3@79.174.91.100:2445?flow=xtls-rprx-vision&encryption=none&type=tcp&security=reality&fp=random&sni=akashi.vk-portal.net&pbk=5w9AftPH_705ynMzcG03D3z61O1qegNp6WFL6jOXxRA&sid=e035146d93da51a9&spx=%2F#%F0%9F%87%B3%F0%9F%87%B1Обходы
